@@ -347,7 +347,6 @@
 
 <div id="error-toast"></div>
 
-<script src="./vector_schema/schemas.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.js"></script>
 <script>
   // ── State ──
@@ -367,26 +366,34 @@
     return `hsl(${hue}, 65%, ${52 + (index % 3) * 6}%)`;
   }
 
-  // ── Schema list (populated from vector_schema/schemas.js) ──
-  function initSchemaList() {
-    const schemas = window.VECTOR_SCHEMAS;
-    if (!schemas || !schemas.length) return;
+  // ── Schema list (from vector_schema/manifest.json) ──
+  (async () => {
+    try {
+      const res = await fetch('./vector_schema/manifest.json');
+      if (!res.ok) return;
+      const schemas = await res.json();
+      if (!schemas.length) return;
 
-    const list = document.getElementById('schema-list');
-    const items = document.getElementById('schema-items');
-    schemas.forEach(({ name, file, data }) => {
-      const btn = document.createElement('button');
-      btn.className = 'btn';
-      btn.textContent = name;
-      btn.addEventListener('click', () => {
-        if (data) { loadData(data); return; }
-        showError(`Données manquantes pour « ${name} ».`);
+      const list = document.getElementById('schema-list');
+      const items = document.getElementById('schema-items');
+      schemas.forEach(({ name, file }) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.textContent = name;
+        btn.addEventListener('click', async () => {
+          try {
+            const r = await fetch(`./vector_schema/${file}`);
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            loadData(await r.json());
+          } catch (err) {
+            showError(`Impossible de charger « ${name} » : ${err.message}`);
+          }
+        });
+        items.appendChild(btn);
       });
-      items.appendChild(btn);
-    });
-    list.style.display = 'block';
-  }
-  initSchemaList();
+      list.style.display = 'block';
+    } catch { /* silencieux si absent */ }
+  })();
 
   // ── Drag & drop ──
   const dropBox = document.getElementById('drop-box');
