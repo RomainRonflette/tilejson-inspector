@@ -201,6 +201,33 @@ header .meta strong { color: var(--text); }
 .map-no-tiles svg { opacity: 0.25; }
 .map-no-tiles p { font-size: 13px; line-height: 1.6; }
 
+/* Geocoder */
+#geocoder-bar {
+  position: absolute; top: 12px; left: 12px; z-index: 10;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+  width: 240px;
+}
+#geocoder-bar svg { color: var(--text-dim); flex-shrink: 0; }
+#geocoder-input {
+  background: none; border: none; outline: none;
+  color: var(--text); font-size: 13px; flex: 1; font-family: inherit;
+}
+#geocoder-input::placeholder { color: var(--text-dim); }
+#geocoder-results {
+  display: none; list-style: none; width: 100%;
+  border-top: 1px solid var(--border); margin: 4px -10px -6px; padding: 4px 0;
+}
+#geocoder-results.open { display: block; }
+#geocoder-results li {
+  padding: 7px 10px; font-size: 12px; cursor: pointer; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: background 0.1s;
+}
+#geocoder-results li:hover, #geocoder-results li.active { background: var(--surface2); }
+
 /* Filter chip */
 #map-filter-chip {
   position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
@@ -243,12 +270,6 @@ header .meta strong { color: var(--text); }
 }
 #map-bounds-alert svg { flex-shrink: 0; }
 #map-bounds-alert span { line-height: 1.4; white-space: normal; max-width: 220px; }
-#map-bounds-alert button {
-  background: rgba(255,255,255,0.2); border: none; color: #fff; cursor: pointer;
-  border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600;
-  font-family: inherit; flex-shrink: 0; transition: background 0.15s;
-}
-#map-bounds-alert button:hover { background: rgba(255,255,255,0.35); }
 
 /* Zoom alert */
 #map-zoom-alert {

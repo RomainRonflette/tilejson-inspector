@@ -19,7 +19,6 @@ const TRANSLATIONS = {
     'zoom.in': 'Zoom in → z{target}',
     'zoom.out': 'Zoom out → z{target}',
     'bounds.alert': 'No data visible in this area',
-    'bounds.btn': 'Center on data',
     'map.noTiles': 'This TileJSON does not contain tile URLs.<br>Map is not available.',
     'popup.noAttrib': 'No attributes',
     'filter.remove': 'Remove filter',
@@ -31,6 +30,8 @@ const TRANSLATIONS = {
     'fields.count': '{n} field{s}',
     'entities.count': '{n} entit{y}',
     'url.placeholder': 'https://… or path to a TileJSON',
+    'geocoder.placeholder': 'Search a location…',
+    'geocoder.notFound': 'No result found.',
   },
   fr: {
     'drop.subtitle': 'Chargez un fichier TileJSON pour explorer ses couches vectorielles et leurs attributs.',
@@ -52,7 +53,6 @@ const TRANSLATIONS = {
     'zoom.in': 'Zoom avant → z{target}',
     'zoom.out': 'Zoom arrière → z{target}',
     'bounds.alert': 'Aucune donnée visible dans cette zone',
-    'bounds.btn': 'Centrer sur les données',
     'map.noTiles': "Ce TileJSON ne contient pas d'URL de tuiles.<br>La carte n'est pas disponible.",
     'popup.noAttrib': 'Aucun attribut',
     'filter.remove': 'Supprimer le filtre',
@@ -64,6 +64,8 @@ const TRANSLATIONS = {
     'fields.count': '{n} champ{s}',
     'entities.count': '{n} entité{s}',
     'url.placeholder': 'https://… ou chemin vers un TileJSON',
+    'geocoder.placeholder': 'Rechercher un lieu…',
+    'geocoder.notFound': 'Aucun résultat trouvé.',
   }
 };
 

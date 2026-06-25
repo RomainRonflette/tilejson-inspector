@@ -124,6 +124,7 @@ function renderApp() {
 
   renderLayerList(allLayers);
   initMap();
+  bindGeocoder();
 }
 
 // ── Layer list ──
@@ -213,16 +214,6 @@ function checkZoomAlert() {
     const hasFeatures = layerIds.length > 0 && map.queryRenderedFeatures({ layers: layerIds }).length > 0;
     if (!hasFeatures) {
       document.getElementById('map-bounds-alert-text').textContent = t('bounds.alert');
-      const btn = document.getElementById('map-bounds-alert-btn');
-      btn.textContent = t('bounds.btn');
-      btn.onclick = () => {
-        const c = tilejson.center;
-        if (c?.length >= 2) {
-          map.jumpTo({ center: [c[0], c[1]], zoom: tilejson.minzoom ?? c[2] ?? 6 });
-        } else if (tilejson.bounds) {
-          map.fitBounds(tilejson.bounds, { padding: 50, duration: 0 });
-        }
-      };
       boundsEl.style.display = 'flex';
     } else {
       boundsEl.style.display = 'none';
@@ -590,6 +581,12 @@ function reset() {
   document.getElementById('map-container').innerHTML = `
     <div id="map"></div>
     <div id="map-zoom-indicator">z <span id="map-zoom-value"></span></div>
+    <div id="geocoder-bar">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input id="geocoder-input" type="text" placeholder="${t('geocoder.placeholder')}" autocomplete="off">
+    </div>
     <div id="map-zoom-alert">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -603,7 +600,6 @@ function reset() {
         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
       </svg>
       <span id="map-bounds-alert-text"></span>
-      <button id="map-bounds-alert-btn"></button>
     </div>
     <div id="map-filter-chip">
       <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -612,6 +608,7 @@ function reset() {
       <span id="map-filter-text"></span>
       <button onclick="clearValueFilter()" data-i18n-title="filter.remove" title="${t('filter.remove')}">×</button>
     </div>`;
+  bindGeocoder();
 }
 
 // ── Utils ──
@@ -625,4 +622,80 @@ function showError(msg) {
   const t = document.getElementById('error-toast');
   t.textContent = msg; t.style.display = 'block';
   setTimeout(() => { t.style.display = 'none'; }, 4000);
+}
+
+// ── Geocoder ──
+let geocoderAbort = null;
+
+function bindGeocoder() {
+  if (geocoderAbort) geocoderAbort.abort();
+  geocoderAbort = new AbortController();
+  const { signal } = geocoderAbort;
+
+  const input = document.getElementById('geocoder-input');
+  const list = document.getElementById('geocoder-results');
+  if (!input || !list) return;
+
+  let debounce;
+  let suggestions = [];
+  let activeIndex = -1;
+
+  function navigate(s) {
+    if (!map) return;
+    const bb = s.boundingbox;
+    if (bb) {
+      map.fitBounds([[+bb[2], +bb[0]], [+bb[3], +bb[1]]], { padding: 50, duration: 0 });
+    } else {
+      map.jumpTo({ center: [+s.lon, +s.lat] });
+    }
+    input.value = s.display_name.split(',')[0].trim();
+    close();
+  }
+
+  function close() {
+    list.classList.remove('open');
+    list.innerHTML = '';
+    suggestions = [];
+    activeIndex = -1;
+  }
+
+  function setActive(i) {
+    list.querySelectorAll('li').forEach((el, j) => el.classList.toggle('active', j === i));
+    activeIndex = i;
+  }
+
+  function render() {
+    list.innerHTML = '';
+    if (!suggestions.length) { list.classList.remove('open'); return; }
+    suggestions.forEach(s => {
+      const li = document.createElement('li');
+      li.textContent = s.display_name;
+      li.addEventListener('mousedown', e => { e.preventDefault(); navigate(s); });
+      list.appendChild(li);
+    });
+    list.classList.add('open');
+    activeIndex = -1;
+  }
+
+  input.addEventListener('input', e => {
+    clearTimeout(debounce);
+    const q = e.target.value.trim();
+    if (q.length < 2) { close(); return; }
+    debounce = setTimeout(async () => {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5`, { signal });
+        suggestions = await res.json();
+        render();
+      } catch { /* aborted or network error */ }
+    }, 300);
+  }, { signal });
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActive(Math.min(activeIndex + 1, suggestions.length - 1)); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(Math.max(activeIndex - 1, 0)); }
+    else if (e.key === 'Enter') { if (activeIndex >= 0) navigate(suggestions[activeIndex]); else if (suggestions.length) navigate(suggestions[0]); }
+    else if (e.key === 'Escape') close();
+  }, { signal });
+
+  input.addEventListener('blur', () => setTimeout(close, 150), { signal });
 }
