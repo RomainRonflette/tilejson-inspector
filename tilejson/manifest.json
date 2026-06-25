@@ -1,0 +1,18 @@
+[
+  {
+    "provider": "IGN",
+    "items": [
+      { "name": "Plan IGN", "file": "metadata_plan_ign.json" }
+    ]
+  },
+  {
+    "provider": "data.gouv.fr",
+    "items": [
+      { "name": "Cadastre", "url": "https://openmaptiles.data.gouv.fr/data/cadastre.json" },
+      { "name": "Découpages administratifs", "url": "https://openmaptiles.data.gouv.fr/data/decoupage-administratif.json" },
+      { "name": "Cadastre DVF", "url": "https://openmaptiles.data.gouv.fr/data/cadastre-dvf.json" },
+      { "name": "Planet Vector", "url": "https://openmaptiles.data.gouv.fr/data/planet-vector.json" },
+      { "name": "France Vector", "url": "https://openmaptiles.data.gouv.fr/data/france-vector.json" }
+    ]
+  }
+]

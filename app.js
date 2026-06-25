@@ -1,0 +1,585 @@
+// ── State ──
+let tilejson = null;
+let allLayers = [];
+let selectedLayerId = null;
+let selectedField = null;
+let selectedValueJson = null;
+let map = null;
+const layerColors = {};
+const baseFilters = {};
+
+// ── Color palette ──
+const HUE_PALETTE = [210, 150, 30, 280, 0, 180, 330, 90, 250, 60, 310, 120, 200, 45, 270, 160, 15, 240, 75, 350];
+function assignLayerColor(index) {
+  const hue = HUE_PALETTE[index % HUE_PALETTE.length];
+  return `hsl(${hue}, 65%, ${52 + (index % 3) * 6}%)`;
+}
+
+// ── Schema list (from tilejson/manifest.json) ──
+(async () => {
+  try {
+    const res = await fetch('./tilejson/manifest.json');
+    if (!res.ok) return;
+    const providers = await res.json();
+    if (!providers.length) return;
+
+    const list = document.getElementById('schema-list');
+    const container = document.getElementById('schema-items');
+
+    providers.forEach(({ provider, items }) => {
+      const group = document.createElement('div');
+      group.className = 'schema-group';
+
+      const label = document.createElement('span');
+      label.className = 'schema-provider';
+      label.textContent = provider;
+      group.appendChild(label);
+
+      const btns = document.createElement('div');
+      btns.className = 'schema-btns';
+
+      items.forEach(({ name, file, url }) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.textContent = name;
+        btn.addEventListener('click', async () => {
+          try {
+            const href = url ?? `./tilejson/${file}`;
+            const r = await fetch(href);
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            loadData(await r.json());
+          } catch (err) {
+            showError(`Impossible de charger « ${name} » : ${err.message}`);
+          }
+        });
+        btns.appendChild(btn);
+      });
+
+      group.appendChild(btns);
+      container.appendChild(group);
+    });
+
+    list.style.display = 'block';
+  } catch { /* silencieux si absent */ }
+})();
+
+// ── Drag & drop ──
+const dropBox = document.getElementById('drop-box');
+document.addEventListener('dragover', e => { e.preventDefault(); dropBox.classList.add('drag-over'); });
+document.addEventListener('dragleave', () => dropBox.classList.remove('drag-over'));
+document.addEventListener('drop', e => {
+  e.preventDefault();
+  dropBox.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) readFile(file);
+});
+document.getElementById('file-input').addEventListener('change', e => {
+  if (e.target.files[0]) readFile(e.target.files[0]);
+});
+document.getElementById('url-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') loadFromUrl();
+});
+
+function readFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try { loadData(JSON.parse(e.target.result)); }
+    catch { showError('Fichier JSON invalide.'); }
+  };
+  reader.readAsText(file);
+}
+
+async function loadFromUrl() {
+  const url = document.getElementById('url-input').value.trim();
+  if (!url) return;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    loadData(await res.json());
+  } catch (err) {
+    showError(`Impossible de charger : ${err.message}`);
+  }
+}
+
+function loadData(data) {
+  if (!data.vector_layers && !data.layers) {
+    showError('Aucun champ "vector_layers" trouvé dans ce TileJSON.');
+    return;
+  }
+  tilejson = data;
+  allLayers = data.vector_layers || data.layers || [];
+  allLayers.forEach((layer, i) => { layerColors[layer.id] = assignLayerColor(i); });
+  renderApp();
+}
+
+function renderApp() {
+  document.getElementById('drop-screen').style.display = 'none';
+  document.getElementById('app-header').style.display = 'flex';
+  document.getElementById('main').classList.add('visible');
+
+  document.getElementById('header-name').textContent = tilejson.name || 'TileJSON Inspector';
+  document.getElementById('header-desc').textContent = tilejson.description || '';
+  document.getElementById('header-zoom').textContent = `${tilejson.minzoom ?? '?'}–${tilejson.maxzoom ?? '?'}`;
+  document.getElementById('header-layers').textContent = allLayers.length;
+
+  renderLayerList(allLayers);
+  initMap();
+}
+
+// ── Layer list ──
+function renderLayerList(layers) {
+  const list = document.getElementById('layer-list');
+  document.getElementById('layer-count').textContent =
+    `${layers.length} / ${allLayers.length} couche${allLayers.length > 1 ? 's' : ''}`;
+  list.innerHTML = '';
+  layers.forEach(layer => {
+    const item = document.createElement('div');
+    item.className = 'layer-item' + (layer.id === selectedLayerId ? ' active' : '');
+    item.dataset.id = layer.id;
+    const fc = layer.fieldsCount ?? Object.keys(layer.fields || {}).length;
+    item.innerHTML = `
+      <div class="name">${esc(layer.id)}</div>
+      <div class="badges">
+        <span class="badge geom">${esc(layer.geometry || 'GEOMETRY')}</span>
+        <span class="badge zoom">z${layer.minzoom ?? '?'}–${layer.maxzoom ?? '?'}</span>
+        <span class="badge fields">${fc} champ${fc !== 1 ? 's' : ''}</span>
+      </div>`;
+    item.addEventListener('click', () => selectLayer(layer.id));
+    list.appendChild(item);
+  });
+}
+
+function filterLayers(q) {
+  const lower = q.toLowerCase();
+  renderLayerList(allLayers.filter(l => l.id.toLowerCase().includes(lower)));
+}
+
+// ── Layer selection ──
+function selectLayer(layerId) {
+  if (selectedLayerId === layerId) return;
+
+  if (selectedField !== null) {
+    selectedField = null;
+    selectedValueJson = null;
+    document.getElementById('map-filter-chip').style.display = 'none';
+  }
+
+  selectedLayerId = layerId;
+
+  document.querySelectorAll('.layer-item').forEach(el =>
+    el.classList.toggle('active', el.dataset.id === layerId)
+  );
+
+  const layer = allLayers.find(l => l.id === layerId);
+  if (layer) showDetail(layer);
+
+  if (map) {
+    highlightSelectedLayer(layerId);
+    checkZoomAlert();
+  }
+}
+
+function checkZoomAlert() {
+  const alertEl = document.getElementById('map-zoom-alert');
+  if (!map || !selectedLayerId) { alertEl.style.display = 'none'; return; }
+
+  const layer = allLayers.find(l => l.id === selectedLayerId);
+  if (!layer) { alertEl.style.display = 'none'; return; }
+
+  const currentZoom = map.getZoom();
+  const minz = layer.minzoom ?? 0;
+  const maxz = layer.maxzoom ?? 22;
+
+  if (currentZoom >= minz && currentZoom <= maxz) {
+    alertEl.style.display = 'none';
+    return;
+  }
+
+  const targetZoom = currentZoom < minz ? minz : maxz;
+  const direction = currentZoom < minz ? 'Zoom avant' : 'Zoom arrière';
+  document.getElementById('map-zoom-alert-text').textContent =
+    `Couche visible entre z${minz} et z${maxz} (zoom actuel : z${currentZoom.toFixed(1)})`;
+  const btn = document.getElementById('map-zoom-alert-btn');
+  btn.textContent = `${direction} → z${targetZoom}`;
+  btn.onclick = () => map.easeTo({ zoom: targetZoom });
+  alertEl.style.display = 'flex';
+}
+
+// ── Detail panel ──
+const TYPE_COLORS = {
+  text: '#3ecf8e',
+  'character varying': '#3ecf8e',
+  integer: '#f59e0b',
+  'double precision': '#f59e0b',
+  boolean: '#a78bfa',
+};
+
+function typeColor(type) {
+  const t = (type || '').toLowerCase();
+  for (const [k, v] of Object.entries(TYPE_COLORS)) {
+    if (t.startsWith(k)) return v;
+  }
+  return '#7a82a0';
+}
+
+function showDetail(layer) {
+  document.getElementById('detail-empty').style.display = 'none';
+  const content = document.getElementById('detail-content');
+  content.style.display = 'block';
+
+  const fields = layer.fields || {};
+  const fieldKeys = Object.keys(fields);
+  const fieldCount = layer.fieldsCount ?? fieldKeys.length;
+
+  content.innerHTML = `
+    <div class="detail-title">${esc(layer.id)}</div>
+    <div class="detail-meta">
+      <span class="badge geom" style="font-size:12px;padding:4px 10px">${esc(layer.geometry || 'GEOMETRY')}</span>
+      <span class="badge zoom" style="font-size:12px;padding:4px 10px">Zoom ${layer.minzoom ?? '?'} → ${layer.maxzoom ?? '?'}</span>
+      <span class="badge fields" style="font-size:12px;padding:4px 10px">${fieldCount} champ${fieldCount !== 1 ? 's' : ''}</span>
+    </div>
+    <div class="section-title">Attributs</div>
+    <div class="fields-grid" id="fields-grid"></div>`;
+
+  const grid = content.querySelector('#fields-grid');
+
+  if (fieldKeys.length === 0) {
+    grid.innerHTML = '<p style="color:var(--text-dim);font-size:13px">Aucun attribut défini pour cette couche.</p>';
+    return;
+  }
+
+  fieldKeys.forEach(key => {
+    const f = fields[key];
+    const values = f.values || [];
+    const countStr = f.count != null ? `${f.count.toLocaleString('fr')} entité${f.count > 1 ? 's' : ''}` : '';
+
+    const card = document.createElement('div');
+    card.className = 'field-card';
+
+    const header = document.createElement('div');
+    header.className = 'field-header';
+    header.innerHTML = `
+      <span class="field-name">${esc(key)}</span>
+      <span class="field-type" style="color:${typeColor(f.type)}">${esc(f.type || 'inconnu')}</span>
+      ${countStr ? `<span class="field-count">${esc(countStr)}</span>` : ''}`;
+    card.appendChild(header);
+
+    if (values.length > 0) {
+      const valContainer = document.createElement('div');
+      valContainer.className = 'field-values';
+      values.forEach(v => {
+        const rawJson = JSON.stringify(v);
+        const tag = document.createElement('span');
+        tag.className = 'value-tag';
+        tag.textContent = String(v);
+        tag.title = 'Filtrer sur la carte';
+        tag.dataset.field = key;
+        tag.dataset.raw = rawJson;
+        if (key === selectedField && rawJson === selectedValueJson) tag.classList.add('selected');
+        tag.addEventListener('click', () => selectValue(key, v, rawJson));
+        valContainer.appendChild(tag);
+      });
+      card.appendChild(valContainer);
+    } else {
+      const noVal = document.createElement('div');
+      noVal.className = 'no-values';
+      noVal.textContent = `Valeurs libres (${countStr || 'aucune statistique'})`;
+      card.appendChild(noVal);
+    }
+
+    grid.appendChild(card);
+  });
+}
+
+// ── Value filter ──
+function selectValue(field, rawValue, rawJson) {
+  const isSame = field === selectedField && rawJson === selectedValueJson;
+  document.querySelectorAll('.value-tag').forEach(el => el.classList.remove('selected'));
+
+  if (isSame) {
+    selectedField = null;
+    selectedValueJson = null;
+    clearValueFilter();
+    return;
+  }
+
+  selectedField = field;
+  selectedValueJson = rawJson;
+
+  document.querySelectorAll(`.value-tag[data-field="${CSS.escape(field)}"][data-raw='${rawJson.replace(/'/g, "\\'")}']`)
+    .forEach(el => el.classList.add('selected'));
+
+  const displayVal = typeof rawValue === 'string' ? `"${rawValue}"` : String(rawValue);
+  document.getElementById('map-filter-text').textContent = `${field} = ${displayVal}`;
+  document.getElementById('map-filter-chip').style.display = 'flex';
+
+  if (map && selectedLayerId) applyMapValueFilter(selectedLayerId, field, rawValue);
+}
+
+function clearValueFilter() {
+  selectedField = null;
+  selectedValueJson = null;
+  document.querySelectorAll('.value-tag').forEach(el => el.classList.remove('selected'));
+  document.getElementById('map-filter-chip').style.display = 'none';
+  if (map && selectedLayerId) highlightSelectedLayer(selectedLayerId);
+}
+
+// ── Map initialization ──
+function initMap() {
+  const hasTiles = tilejson.tiles && tilejson.tiles.length > 0;
+
+  if (!hasTiles) {
+    document.getElementById('map').style.display = 'none';
+    document.getElementById('map-container').innerHTML += `
+      <div class="map-no-tiles">
+        <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/>
+        </svg>
+        <p>Ce TileJSON ne contient pas d'URL de tuiles.<br>La carte n'est pas disponible.</p>
+      </div>`;
+    return;
+  }
+
+  const center = tilejson.center;
+  const bounds = tilejson.bounds;
+  const opts = { container: 'map', style: buildMapStyle(), attributionControl: true };
+
+  if (center && center.length >= 2) {
+    opts.center = [center[0], center[1]];
+    opts.zoom = center[2] ?? tilejson.minzoom ?? 5;
+  } else {
+    opts.center = [2.35, 46.5];
+    opts.zoom = tilejson.minzoom ?? 5;
+  }
+
+  map = new maplibregl.Map(opts);
+  map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+  map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
+
+  if (bounds) map.fitBounds(bounds, { padding: 50, duration: 0 });
+
+  function updateZoomIndicator() {
+    document.getElementById('map-zoom-value').textContent = map.getZoom().toFixed(1);
+    document.getElementById('map-zoom-indicator').style.display = 'block';
+  }
+
+  map.on('zoom', () => { updateZoomIndicator(); checkZoomAlert(); });
+
+  map.on('load', () => {
+    updateZoomIndicator();
+    getAllMapLayerIds().forEach(id => {
+      map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
+    });
+    if (selectedLayerId) highlightSelectedLayer(selectedLayerId);
+  });
+
+  map.on('click', e => {
+    const features = map.queryRenderedFeatures(e.point, { layers: getAllMapLayerIds() });
+    if (!features.length) return;
+
+    const feat = features[0];
+    const sourceLayer = feat.layer['source-layer'];
+    const props = feat.properties || {};
+
+    if (sourceLayer !== selectedLayerId) selectLayer(sourceLayer);
+
+    const entries = Object.entries(props);
+    let html = `<div class="popup-layer-name">${esc(sourceLayer)}</div>`;
+    if (entries.length === 0) {
+      html += '<span class="popup-empty">Aucun attribut</span>';
+    } else {
+      html += '<table class="popup-table">';
+      entries.forEach(([k, v]) => {
+        html += `<tr${k === selectedField ? ' class="filtered"' : ''}><td>${esc(k)}</td><td>${esc(String(v))}</td></tr>`;
+      });
+      html += '</table>';
+    }
+
+    new maplibregl.Popup({ maxWidth: '260px' })
+      .setLngLat(e.lngLat)
+      .setHTML(html)
+      .addTo(map);
+  });
+}
+
+// ── Map style ──
+function buildMapStyle() {
+  const layers = [{ id: 'background', type: 'background', paint: { 'background-color': '#0f1117' } }];
+  allLayers.forEach(layer => layers.push(...getMapLayers(layer)));
+  return {
+    version: 8,
+    glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+    sources: {
+      tiles: {
+        type: 'vector',
+        tiles: tilejson.tiles,
+        minzoom: tilejson.minzoom ?? 0,
+        maxzoom: tilejson.maxzoom ?? 22,
+        ...(tilejson.attribution ? { attribution: tilejson.attribution } : {}),
+      },
+    },
+    layers,
+  };
+}
+
+function getMapLayers(layer) {
+  const color = layerColors[layer.id];
+  const { isPolygon, isLine, isPoint } = geomFlags(layer);
+  const result = [];
+  const src = { source: 'tiles', 'source-layer': layer.id };
+
+  function add(id, type, filter, paint) {
+    baseFilters[id] = filter;
+    result.push({ id, type, ...src, filter, paint });
+  }
+
+  if (isPolygon) {
+    add(`${layer.id}--fill`, 'fill', ['==', ['geometry-type'], 'Polygon'], { 'fill-color': color, 'fill-opacity': 0.3 });
+    add(`${layer.id}--outline`, 'line', ['==', ['geometry-type'], 'Polygon'], { 'line-color': color, 'line-opacity': 0.7, 'line-width': 1 });
+  }
+  if (isLine) {
+    add(`${layer.id}--line`, 'line', ['==', ['geometry-type'], 'LineString'], { 'line-color': color, 'line-opacity': 0.75, 'line-width': 1.5 });
+  }
+  if (isPoint) {
+    add(`${layer.id}--circle`, 'circle', ['==', ['geometry-type'], 'Point'], {
+      'circle-color': color, 'circle-opacity': 0.85,
+      'circle-radius': 4, 'circle-stroke-width': 1, 'circle-stroke-color': '#0f1117',
+    });
+  }
+
+  return result;
+}
+
+function geomFlags(layer) {
+  const g = (layer.geometry || '').toUpperCase();
+  const unknown = !g || g === 'GEOMETRY';
+  return {
+    isPolygon: unknown || g.includes('POLYGON'),
+    isLine: unknown || g.includes('LINE'),
+    isPoint: unknown || g.includes('POINT'),
+  };
+}
+
+function getAllMapLayerIds() {
+  const ids = [];
+  allLayers.forEach(layer => {
+    const { isPolygon, isLine, isPoint } = geomFlags(layer);
+    if (isPolygon) { ids.push(`${layer.id}--fill`); ids.push(`${layer.id}--outline`); }
+    if (isLine) ids.push(`${layer.id}--line`);
+    if (isPoint) ids.push(`${layer.id}--circle`);
+  });
+  return ids;
+}
+
+// ── Map highlight logic ──
+function highlightSelectedLayer(layerId) {
+  if (!map) return;
+  allLayers.forEach(layer => {
+    const isSelected = layer.id === layerId;
+    const color = layerColors[layer.id];
+    const { isPolygon, isLine, isPoint } = geomFlags(layer);
+
+    if (isPolygon) {
+      sp(layer.id + '--fill', 'fill-color', color);
+      sp(layer.id + '--fill', 'fill-opacity', isSelected ? 0.42 : 0.04);
+      sp(layer.id + '--outline', 'line-color', color);
+      sp(layer.id + '--outline', 'line-opacity', isSelected ? 0.9 : 0.06);
+      sp(layer.id + '--outline', 'line-width', isSelected ? 1.5 : 1);
+    }
+    if (isLine) {
+      sp(layer.id + '--line', 'line-color', color);
+      sp(layer.id + '--line', 'line-opacity', isSelected ? 0.9 : 0.06);
+      sp(layer.id + '--line', 'line-width', isSelected ? 2.5 : 1.5);
+    }
+    if (isPoint) {
+      sp(layer.id + '--circle', 'circle-color', color);
+      sp(layer.id + '--circle', 'circle-opacity', isSelected ? 0.9 : 0.06);
+      sp(layer.id + '--circle', 'circle-radius', isSelected ? 5 : 4);
+    }
+  });
+}
+
+function applyMapValueFilter(layerId, field, rawValue) {
+  if (!map) return;
+  const layer = allLayers.find(l => l.id === layerId);
+  if (!layer) return;
+  const { isPolygon, isLine, isPoint } = geomFlags(layer);
+  const color = layerColors[layerId];
+  const matchExpr = ['==', ['get', field], rawValue];
+
+  if (isPolygon) {
+    sp(layerId + '--fill', 'fill-color', ['case', matchExpr, '#4f7ef8', color]);
+    sp(layerId + '--fill', 'fill-opacity', ['case', matchExpr, 0.55, 0.03]);
+    sp(layerId + '--outline', 'line-color', ['case', matchExpr, '#4f7ef8', color]);
+    sp(layerId + '--outline', 'line-opacity', ['case', matchExpr, 1, 0.05]);
+    sp(layerId + '--outline', 'line-width', ['case', matchExpr, 2, 1]);
+  }
+  if (isLine) {
+    sp(layerId + '--line', 'line-color', ['case', matchExpr, '#4f7ef8', color]);
+    sp(layerId + '--line', 'line-opacity', ['case', matchExpr, 1, 0.05]);
+    sp(layerId + '--line', 'line-width', ['case', matchExpr, 3, 1.5]);
+  }
+  if (isPoint) {
+    sp(layerId + '--circle', 'circle-color', ['case', matchExpr, '#4f7ef8', color]);
+    sp(layerId + '--circle', 'circle-opacity', ['case', matchExpr, 1, 0.05]);
+    sp(layerId + '--circle', 'circle-radius', ['case', matchExpr, 7, 4]);
+  }
+}
+
+function sp(id, prop, value) {
+  if (map && map.getLayer(id)) map.setPaintProperty(id, prop, value);
+}
+
+// ── Reset ──
+function reset() {
+  tilejson = null; allLayers = []; selectedLayerId = null;
+  selectedField = null; selectedValueJson = null;
+  Object.keys(layerColors).forEach(k => delete layerColors[k]);
+  Object.keys(baseFilters).forEach(k => delete baseFilters[k]);
+
+  if (map) { map.remove(); map = null; }
+
+  document.getElementById('drop-screen').style.display = 'flex';
+  document.getElementById('app-header').style.display = 'none';
+  document.getElementById('main').classList.remove('visible');
+  document.getElementById('detail-empty').style.display = 'flex';
+  document.getElementById('detail-content').style.display = 'none';
+  document.getElementById('map-filter-chip').style.display = 'none';
+  document.getElementById('file-input').value = '';
+  document.getElementById('url-input').value = '';
+  document.getElementById('search').value = '';
+  document.getElementById('layer-list').innerHTML = '';
+
+  document.getElementById('map-container').innerHTML = `
+    <div id="map"></div>
+    <div id="map-zoom-indicator">z <span id="map-zoom-value"></span></div>
+    <div id="map-zoom-alert">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <span id="map-zoom-alert-text"></span>
+      <button id="map-zoom-alert-btn"></button>
+    </div>
+    <div id="map-filter-chip">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+      </svg>
+      <span id="map-filter-text"></span>
+      <button onclick="clearValueFilter()" title="Supprimer le filtre">×</button>
+    </div>`;
+}
+
+// ── Utils ──
+function esc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function showError(msg) {
+  const t = document.getElementById('error-toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 4000);
+}
