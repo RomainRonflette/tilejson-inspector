@@ -118,7 +118,9 @@ function renderApp() {
   document.getElementById('main').classList.add('visible');
 
   document.getElementById('header-name').textContent = tilejson.name || 'tilejson-inspector';
-  document.getElementById('header-desc').textContent = tilejson.description || '';
+  const descEl = document.getElementById('header-desc');
+  descEl.textContent = tilejson.description || '';
+  descEl.style.display = tilejson.description ? '' : 'none';
   document.getElementById('header-zoom').textContent = `${tilejson.minzoom ?? '?'}–${tilejson.maxzoom ?? '?'}`;
   document.getElementById('header-layers-text').textContent =
     t('header.layers', { n: allLayers.length, s: allLayers.length !== 1 ? 's' : '' });
@@ -590,6 +592,17 @@ function showError(msg) {
   toast.textContent = msg; toast.style.display = 'block';
   setTimeout(() => { toast.style.display = 'none'; }, 4000);
 }
+
+// ── Help modal ──
+function openHelp() {
+  document.getElementById('help-modal').style.display = 'flex';
+}
+function closeHelp() {
+  document.getElementById('help-modal').style.display = 'none';
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeHelp();
+});
 
 // ── Geocoder ──
 let geocoderAbort = null;
