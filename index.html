@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,23 +11,27 @@
 
 <!-- Drop screen -->
 <div id="drop-screen">
+  <select class="lang-select btn" onchange="setLang(this.value)" style="position:absolute;top:12px;right:16px">
+    <option value="en">EN</option>
+    <option value="fr">FR</option>
+  </select>
   <div class="drop-box" id="drop-box">
     <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
       <path d="M12 16V8m0 0-3 3m3-3 3 3M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1"/>
     </svg>
     <h2>TileJSON Inspector</h2>
-    <p>Chargez un fichier TileJSON pour explorer ses couches vectorielles et leurs attributs.</p>
+    <p data-i18n="drop.subtitle">Load a TileJSON file to explore its vector layers and attributes.</p>
     <div class="drop-actions">
-      <button class="btn primary" onclick="document.getElementById('file-input').click()">Ouvrir un fichier</button>
+      <button class="btn primary" onclick="document.getElementById('file-input').click()" data-i18n="drop.openFile">Open a file</button>
     </div>
     <div class="url-row">
-      <input type="text" id="url-input" placeholder="https://… ou chemin vers un TileJSON">
-      <button class="btn" onclick="loadFromUrl()">Charger</button>
+      <input type="text" id="url-input" data-i18n-placeholder="url.placeholder" placeholder="https://… or path to a TileJSON">
+      <button class="btn" onclick="loadFromUrl()" data-i18n="drop.load">Load</button>
     </div>
     <input type="file" id="file-input" accept=".json,application/json">
-    <p class="drop-hint">Glissez-déposez un fichier .json ici</p>
+    <p class="drop-hint" data-i18n="drop.hint">Drag and drop a .json file here</p>
     <div id="schema-list" style="display:none">
-      <p>Schémas disponibles</p>
+      <p data-i18n="drop.schemas">Available schemas</p>
       <div id="schema-items"></div>
     </div>
   </div>
@@ -39,8 +43,12 @@
   <div class="meta">
     <span id="header-desc"></span>
     <span>Zoom <strong id="header-zoom"></strong></span>
-    <span><strong id="header-layers"></strong> couches</span>
-    <button class="btn" id="reset-btn" onclick="reset()">↩ Changer de TileJSON</button>
+    <span><strong id="header-layers"></strong> layers</span>
+    <select class="lang-select btn" onchange="setLang(this.value)">
+      <option value="en">EN</option>
+      <option value="fr">FR</option>
+    </select>
+    <button class="btn" id="reset-btn" onclick="reset()" data-i18n="header.reset">↩ Change TileJSON</button>
   </div>
 </header>
 
@@ -54,7 +62,7 @@
         <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         </svg>
-        <input type="text" id="search" placeholder="Filtrer les couches…" oninput="filterLayers(this.value)">
+        <input type="text" id="search" data-i18n-placeholder="sidebar.search" placeholder="Filter layers…" oninput="filterLayers(this.value)">
       </div>
       <div class="layer-count" id="layer-count"></div>
     </div>
@@ -68,7 +76,7 @@
         <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
           <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/>
         </svg>
-        <span>Sélectionnez une couche</span>
+        <span data-i18n="detail.empty">Select a layer</span>
       </div>
       <div id="detail-content" style="display:none"></div>
     </div>
@@ -91,7 +99,7 @@
         <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
       </svg>
       <span id="map-filter-text"></span>
-      <button onclick="clearValueFilter()" title="Supprimer le filtre">×</button>
+      <button onclick="clearValueFilter()" data-i18n-title="filter.remove" title="Remove filter">×</button>
     </div>
   </div>
 
@@ -100,6 +108,7 @@
 <div id="error-toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.js"></script>
+<script src="i18n.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

@@ -49,7 +49,7 @@ function assignLayerColor(index) {
             if (!r.ok) throw new Error(`HTTP ${r.status}`);
             loadData(await r.json());
           } catch (err) {
-            showError(`Impossible de charger « ${name} » : ${err.message}`);
+            showError(t('error.loadItem', { name, msg: err.message }));
           }
         });
         btns.appendChild(btn);
@@ -84,7 +84,7 @@ function readFile(file) {
   const reader = new FileReader();
   reader.onload = e => {
     try { loadData(JSON.parse(e.target.result)); }
-    catch { showError('Fichier JSON invalide.'); }
+    catch { showError(t('error.invalidJson')); }
   };
   reader.readAsText(file);
 }
@@ -97,13 +97,13 @@ async function loadFromUrl() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     loadData(await res.json());
   } catch (err) {
-    showError(`Impossible de charger : ${err.message}`);
+    showError(t('error.loadUrl', { msg: err.message }));
   }
 }
 
 function loadData(data) {
   if (!data.vector_layers && !data.layers) {
-    showError('Aucun champ "vector_layers" trouvé dans ce TileJSON.');
+    showError(t('error.noLayers'));
     return;
   }
   tilejson = data;
@@ -130,7 +130,7 @@ function renderApp() {
 function renderLayerList(layers) {
   const list = document.getElementById('layer-list');
   document.getElementById('layer-count').textContent =
-    `${layers.length} / ${allLayers.length} couche${allLayers.length > 1 ? 's' : ''}`;
+    t('layers.count', { n: layers.length, total: allLayers.length, s: allLayers.length !== 1 ? 's' : '' });
   list.innerHTML = '';
   layers.forEach(layer => {
     const item = document.createElement('div');
@@ -142,7 +142,7 @@ function renderLayerList(layers) {
       <div class="badges">
         <span class="badge geom">${esc(layer.geometry || 'GEOMETRY')}</span>
         <span class="badge zoom">z${layer.minzoom ?? '?'}–${layer.maxzoom ?? '?'}</span>
-        <span class="badge fields">${fc} champ${fc !== 1 ? 's' : ''}</span>
+        <span class="badge fields">${t('fields.count', { n: fc, s: fc !== 1 ? 's' : '' })}</span>
       </div>`;
     item.addEventListener('click', () => selectLayer(layer.id));
     list.appendChild(item);
@@ -196,11 +196,10 @@ function checkZoomAlert() {
   }
 
   const targetZoom = currentZoom < minz ? minz : maxz;
-  const direction = currentZoom < minz ? 'Zoom avant' : 'Zoom arrière';
   document.getElementById('map-zoom-alert-text').textContent =
-    `Couche visible entre z${minz} et z${maxz} (zoom actuel : z${currentZoom.toFixed(1)})`;
+    t('zoom.alert', { min: minz, max: maxz, current: currentZoom.toFixed(1) });
   const btn = document.getElementById('map-zoom-alert-btn');
-  btn.textContent = `${direction} → z${targetZoom}`;
+  btn.textContent = t(currentZoom < minz ? 'zoom.in' : 'zoom.out', { target: targetZoom });
   btn.onclick = () => map.easeTo({ zoom: targetZoom });
   alertEl.style.display = 'flex';
 }
@@ -235,23 +234,29 @@ function showDetail(layer) {
     <div class="detail-title">${esc(layer.id)}</div>
     <div class="detail-meta">
       <span class="badge geom" style="font-size:12px;padding:4px 10px">${esc(layer.geometry || 'GEOMETRY')}</span>
-      <span class="badge zoom" style="font-size:12px;padding:4px 10px">Zoom ${layer.minzoom ?? '?'} → ${layer.maxzoom ?? '?'}</span>
-      <span class="badge fields" style="font-size:12px;padding:4px 10px">${fieldCount} champ${fieldCount !== 1 ? 's' : ''}</span>
+      <span class="badge zoom" style="font-size:12px;padding:4px 10px">${t('detail.zoom', { min: layer.minzoom ?? '?', max: layer.maxzoom ?? '?' })}</span>
+      <span class="badge fields" style="font-size:12px;padding:4px 10px">${t('fields.count', { n: fieldCount, s: fieldCount !== 1 ? 's' : '' })}</span>
     </div>
-    <div class="section-title">Attributs</div>
+    <div class="section-title">${t('detail.attributes')}</div>
     <div class="fields-grid" id="fields-grid"></div>`;
 
   const grid = content.querySelector('#fields-grid');
 
   if (fieldKeys.length === 0) {
-    grid.innerHTML = '<p style="color:var(--text-dim);font-size:13px">Aucun attribut défini pour cette couche.</p>';
+    grid.innerHTML = `<p style="color:var(--text-dim);font-size:13px">${t('detail.noFields')}</p>`;
     return;
   }
 
   fieldKeys.forEach(key => {
     const f = fields[key];
     const values = f.values || [];
-    const countStr = f.count != null ? `${f.count.toLocaleString('fr')} entité${f.count > 1 ? 's' : ''}` : '';
+    const countStr = f.count != null
+      ? t('entities.count', {
+          n: f.count.toLocaleString(currentLang === 'fr' ? 'fr' : 'en'),
+          y: f.count > 1 ? 'ies' : 'y',
+          s: f.count > 1 ? 's' : '',
+        })
+      : '';
 
     const card = document.createElement('div');
     card.className = 'field-card';
@@ -260,7 +265,7 @@ function showDetail(layer) {
     header.className = 'field-header';
     header.innerHTML = `
       <span class="field-name">${esc(key)}</span>
-      <span class="field-type" style="color:${typeColor(f.type)}">${esc(f.type || 'inconnu')}</span>
+      <span class="field-type" style="color:${typeColor(f.type)}">${esc(f.type || t('type.unknown'))}</span>
       ${countStr ? `<span class="field-count">${esc(countStr)}</span>` : ''}`;
     card.appendChild(header);
 
@@ -272,7 +277,7 @@ function showDetail(layer) {
         const tag = document.createElement('span');
         tag.className = 'value-tag';
         tag.textContent = String(v);
-        tag.title = 'Filtrer sur la carte';
+        tag.title = t('value.filterTitle');
         tag.dataset.field = key;
         tag.dataset.raw = rawJson;
         if (key === selectedField && rawJson === selectedValueJson) tag.classList.add('selected');
@@ -283,7 +288,7 @@ function showDetail(layer) {
     } else {
       const noVal = document.createElement('div');
       noVal.className = 'no-values';
-      noVal.textContent = `Valeurs libres (${countStr || 'aucune statistique'})`;
+      noVal.textContent = t('detail.freeValues', { count: countStr || t('detail.noStats') });
       card.appendChild(noVal);
     }
 
@@ -335,7 +340,7 @@ function initMap() {
         <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
           <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/>
         </svg>
-        <p>Ce TileJSON ne contient pas d'URL de tuiles.<br>La carte n'est pas disponible.</p>
+        <p>${t('map.noTiles')}</p>
       </div>`;
     return;
   }
@@ -387,7 +392,7 @@ function initMap() {
     const entries = Object.entries(props);
     let html = `<div class="popup-layer-name">${esc(sourceLayer)}</div>`;
     if (entries.length === 0) {
-      html += '<span class="popup-empty">Aucun attribut</span>';
+      html += `<span class="popup-empty">${t('popup.noAttrib')}</span>`;
     } else {
       html += '<table class="popup-table">';
       entries.forEach(([k, v]) => {
@@ -550,6 +555,7 @@ function reset() {
   document.getElementById('url-input').value = '';
   document.getElementById('search').value = '';
   document.getElementById('layer-list').innerHTML = '';
+  applyI18n();
 
   document.getElementById('map-container').innerHTML = `
     <div id="map"></div>
@@ -567,7 +573,7 @@ function reset() {
         <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
       </svg>
       <span id="map-filter-text"></span>
-      <button onclick="clearValueFilter()" title="Supprimer le filtre">×</button>
+      <button onclick="clearValueFilter()" data-i18n-title="filter.remove" title="${t('filter.remove')}">×</button>
     </div>`;
 }
 
