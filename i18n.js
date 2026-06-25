@@ -32,6 +32,8 @@ const TRANSLATIONS = {
     'url.placeholder': 'https://… or path to a TileJSON',
     'geocoder.placeholder': 'Search a location…',
     'geocoder.notFound': 'No result found.',
+    'header.zoom': 'Zoom',
+    'header.layers': '{n} layer{s}',
   },
   fr: {
     'drop.subtitle': 'Chargez un fichier TileJSON pour explorer ses couches vectorielles et leurs attributs.',
@@ -66,6 +68,8 @@ const TRANSLATIONS = {
     'url.placeholder': 'https://… ou chemin vers un TileJSON',
     'geocoder.placeholder': 'Rechercher un lieu…',
     'geocoder.notFound': 'Aucun résultat trouvé.',
+    'header.zoom': 'Zoom',
+    'header.layers': '{n} couche{s}',
   }
 };
 
@@ -82,6 +86,9 @@ function setLang(lang) {
   document.documentElement.lang = lang;
   applyI18n();
   if (typeof tilejson !== 'undefined' && tilejson) {
+    const layersEl = document.getElementById('header-layers-text');
+    if (layersEl) layersEl.textContent =
+      t('header.layers', { n: allLayers.length, s: allLayers.length !== 1 ? 's' : '' });
     renderLayerList(allLayers);
     const layer = allLayers.find(l => l.id === selectedLayerId);
     if (layer) showDetail(layer);

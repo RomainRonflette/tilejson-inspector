@@ -1,4 +1,5 @@
 // ── State ──
+const MAP_CONTAINER_INITIAL_HTML = document.getElementById('map-container').innerHTML;
 let tilejson = null;
 let allLayers = [];
 let selectedLayerId = null;
@@ -6,7 +7,6 @@ let selectedField = null;
 let selectedValueJson = null;
 let map = null;
 const layerColors = {};
-const baseFilters = {};
 
 // ── Color palette ──
 const HUE_PALETTE = [210, 150, 30, 280, 0, 180, 330, 90, 250, 60, 310, 120, 200, 45, 270, 160, 15, 240, 75, 350];
@@ -120,7 +120,8 @@ function renderApp() {
   document.getElementById('header-name').textContent = tilejson.name || 'TileJSON Inspector';
   document.getElementById('header-desc').textContent = tilejson.description || '';
   document.getElementById('header-zoom').textContent = `${tilejson.minzoom ?? '?'}–${tilejson.maxzoom ?? '?'}`;
-  document.getElementById('header-layers').textContent = allLayers.length;
+  document.getElementById('header-layers-text').textContent =
+    t('header.layers', { n: allLayers.length, s: allLayers.length !== 1 ? 's' : '' });
 
   renderLayerList(allLayers);
   initMap();
@@ -218,8 +219,6 @@ function checkZoomAlert() {
     } else {
       boundsEl.style.display = 'none';
     }
-  } else if (boundsEl) {
-    boundsEl.style.display = 'none';
   }
 }
 
@@ -233,9 +232,9 @@ const TYPE_COLORS = {
 };
 
 function typeColor(type) {
-  const t = (type || '').toLowerCase();
+  const lower = (type || '').toLowerCase();
   for (const [k, v] of Object.entries(TYPE_COLORS)) {
-    if (t.startsWith(k)) return v;
+    if (lower.startsWith(k)) return v;
   }
   return '#7a82a0';
 }
@@ -330,8 +329,8 @@ function selectValue(field, rawValue, rawJson) {
   selectedField = field;
   selectedValueJson = rawJson;
 
-  document.querySelectorAll(`.value-tag[data-field="${CSS.escape(field)}"][data-raw='${rawJson.replace(/'/g, "\\'")}']`)
-    .forEach(el => el.classList.add('selected'));
+  document.querySelectorAll(`.value-tag[data-field="${CSS.escape(field)}"]`)
+    .forEach(el => { if (el.dataset.raw === rawJson) el.classList.add('selected'); });
 
   const displayVal = typeof rawValue === 'string' ? `"${rawValue}"` : String(rawValue);
   document.getElementById('map-filter-text').textContent = `${field} = ${displayVal}`;
@@ -435,7 +434,7 @@ function buildMapStyle() {
   allLayers.forEach(layer => layers.push(...getMapLayers(layer)));
   return {
     version: 8,
-    glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+    glyphs: 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf',
     sources: {
       tiles: {
         type: 'vector',
@@ -456,7 +455,6 @@ function getMapLayers(layer) {
   const src = { source: 'tiles', 'source-layer': layer.id };
 
   function add(id, type, filter, paint) {
-    baseFilters[id] = filter;
     result.push({ id, type, ...src, filter, paint });
   }
 
@@ -562,7 +560,6 @@ function reset() {
   tilejson = null; allLayers = []; selectedLayerId = null;
   selectedField = null; selectedValueJson = null;
   Object.keys(layerColors).forEach(k => delete layerColors[k]);
-  Object.keys(baseFilters).forEach(k => delete baseFilters[k]);
 
   if (map) { map.remove(); map = null; }
 
@@ -571,43 +568,13 @@ function reset() {
   document.getElementById('main').classList.remove('visible');
   document.getElementById('detail-empty').style.display = 'flex';
   document.getElementById('detail-content').style.display = 'none';
-  document.getElementById('map-filter-chip').style.display = 'none';
   document.getElementById('file-input').value = '';
   document.getElementById('url-input').value = '';
   document.getElementById('search').value = '';
   document.getElementById('layer-list').innerHTML = '';
   applyI18n();
 
-  document.getElementById('map-container').innerHTML = `
-    <div id="map"></div>
-    <div id="map-zoom-indicator">z <span id="map-zoom-value"></span></div>
-    <div id="geocoder-bar">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-      </svg>
-      <input id="geocoder-input" type="text" placeholder="${t('geocoder.placeholder')}" autocomplete="off">
-    </div>
-    <div id="map-zoom-alert">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-      </svg>
-      <span id="map-zoom-alert-text"></span>
-      <button id="map-zoom-alert-btn"></button>
-    </div>
-    <div id="map-bounds-alert">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-      </svg>
-      <span id="map-bounds-alert-text"></span>
-    </div>
-    <div id="map-filter-chip">
-      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-      </svg>
-      <span id="map-filter-text"></span>
-      <button onclick="clearValueFilter()" data-i18n-title="filter.remove" title="${t('filter.remove')}">×</button>
-    </div>`;
+  document.getElementById('map-container').innerHTML = MAP_CONTAINER_INITIAL_HTML;
   bindGeocoder();
 }
 
@@ -619,9 +586,9 @@ function esc(str) {
 }
 
 function showError(msg) {
-  const t = document.getElementById('error-toast');
-  t.textContent = msg; t.style.display = 'block';
-  setTimeout(() => { t.style.display = 'none'; }, 4000);
+  const toast = document.getElementById('error-toast');
+  toast.textContent = msg; toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 4000);
 }
 
 // ── Geocoder ──
@@ -683,7 +650,7 @@ function bindGeocoder() {
     if (q.length < 2) { close(); return; }
     debounce = setTimeout(async () => {
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5`, { signal });
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5`, { signal, headers: { 'User-Agent': 'VectorTileInspector/1.0' } });
         suggestions = await res.json();
         render();
       } catch { /* aborted or network error */ }
