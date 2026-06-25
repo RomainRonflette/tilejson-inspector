@@ -232,6 +232,24 @@ header .meta strong { color: var(--text); }
 }
 #map-zoom-indicator span { color: var(--text); }
 
+/* Bounds alert */
+#map-bounds-alert {
+  position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%);
+  background: rgba(79,126,248,0.95); color: #fff;
+  border-radius: 10px; padding: 10px 14px;
+  font-size: 12px; display: none; align-items: center; gap: 10px;
+  z-index: 10; backdrop-filter: blur(8px); white-space: nowrap;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+#map-bounds-alert svg { flex-shrink: 0; }
+#map-bounds-alert span { line-height: 1.4; white-space: normal; max-width: 220px; }
+#map-bounds-alert button {
+  background: rgba(255,255,255,0.2); border: none; color: #fff; cursor: pointer;
+  border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600;
+  font-family: inherit; flex-shrink: 0; transition: background 0.15s;
+}
+#map-bounds-alert button:hover { background: rgba(255,255,255,0.35); }
+
 /* Zoom alert */
 #map-zoom-alert {
   position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%);

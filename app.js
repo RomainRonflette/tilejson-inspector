@@ -136,14 +136,7 @@ function renderLayerList(layers) {
     const item = document.createElement('div');
     item.className = 'layer-item' + (layer.id === selectedLayerId ? ' active' : '');
     item.dataset.id = layer.id;
-    const fc = layer.fieldsCount ?? Object.keys(layer.fields || {}).length;
-    item.innerHTML = `
-      <div class="name">${esc(layer.id)}</div>
-      <div class="badges">
-        <span class="badge geom">${esc(layer.geometry || 'GEOMETRY')}</span>
-        <span class="badge zoom">z${layer.minzoom ?? '?'}–${layer.maxzoom ?? '?'}</span>
-        <span class="badge fields">${t('fields.count', { n: fc, s: fc !== 1 ? 's' : '' })}</span>
-      </div>`;
+    item.innerHTML = `<div class="name">${esc(layer.id)}</div>`;
     item.addEventListener('click', () => selectLayer(layer.id));
     list.appendChild(item);
   });
@@ -179,29 +172,64 @@ function selectLayer(layerId) {
   }
 }
 
+
 function checkZoomAlert() {
-  const alertEl = document.getElementById('map-zoom-alert');
-  if (!map || !selectedLayerId) { alertEl.style.display = 'none'; return; }
+  const zoomEl = document.getElementById('map-zoom-alert');
+  const boundsEl = document.getElementById('map-bounds-alert');
+  if (!map || !selectedLayerId) {
+    zoomEl.style.display = 'none';
+    if (boundsEl) boundsEl.style.display = 'none';
+    return;
+  }
 
   const layer = allLayers.find(l => l.id === selectedLayerId);
-  if (!layer) { alertEl.style.display = 'none'; return; }
+  if (!layer) {
+    zoomEl.style.display = 'none';
+    if (boundsEl) boundsEl.style.display = 'none';
+    return;
+  }
 
   const currentZoom = map.getZoom();
   const minz = layer.minzoom ?? 0;
   const maxz = layer.maxzoom ?? 22;
 
-  if (currentZoom >= minz && currentZoom <= maxz) {
-    alertEl.style.display = 'none';
+  if (currentZoom < minz || currentZoom > maxz) {
+    const targetZoom = currentZoom < minz ? minz : maxz;
+    document.getElementById('map-zoom-alert-text').textContent =
+      t('zoom.alert', { min: minz, max: maxz, current: currentZoom.toFixed(1) });
+    const btn = document.getElementById('map-zoom-alert-btn');
+    btn.textContent = t(currentZoom < minz ? 'zoom.in' : 'zoom.out', { target: targetZoom });
+    btn.onclick = () => map.easeTo({ zoom: targetZoom });
+    zoomEl.style.display = 'flex';
+    if (boundsEl) boundsEl.style.display = 'none';
     return;
   }
 
-  const targetZoom = currentZoom < minz ? minz : maxz;
-  document.getElementById('map-zoom-alert-text').textContent =
-    t('zoom.alert', { min: minz, max: maxz, current: currentZoom.toFixed(1) });
-  const btn = document.getElementById('map-zoom-alert-btn');
-  btn.textContent = t(currentZoom < minz ? 'zoom.in' : 'zoom.out', { target: targetZoom });
-  btn.onclick = () => map.easeTo({ zoom: targetZoom });
-  alertEl.style.display = 'flex';
+  zoomEl.style.display = 'none';
+
+  if (boundsEl) {
+    const layerIds = [`${selectedLayerId}--fill`, `${selectedLayerId}--line`, `${selectedLayerId}--circle`]
+      .filter(id => map.getLayer(id));
+    const hasFeatures = layerIds.length > 0 && map.queryRenderedFeatures({ layers: layerIds }).length > 0;
+    if (!hasFeatures) {
+      document.getElementById('map-bounds-alert-text').textContent = t('bounds.alert');
+      const btn = document.getElementById('map-bounds-alert-btn');
+      btn.textContent = t('bounds.btn');
+      btn.onclick = () => {
+        const c = tilejson.center;
+        if (c?.length >= 2) {
+          map.jumpTo({ center: [c[0], c[1]], zoom: tilejson.minzoom ?? c[2] ?? 6 });
+        } else if (tilejson.bounds) {
+          map.fitBounds(tilejson.bounds, { padding: 50, duration: 0 });
+        }
+      };
+      boundsEl.style.display = 'flex';
+    } else {
+      boundsEl.style.display = 'none';
+    }
+  } else if (boundsEl) {
+    boundsEl.style.display = 'none';
+  }
 }
 
 // ── Detail panel ──
@@ -352,6 +380,9 @@ function initMap() {
   if (center && center.length >= 2) {
     opts.center = [center[0], center[1]];
     opts.zoom = center[2] ?? tilejson.minzoom ?? 5;
+  } else if (bounds) {
+    opts.bounds = bounds;
+    opts.fitBoundsOptions = { padding: 50 };
   } else {
     opts.center = [2.35, 46.5];
     opts.zoom = tilejson.minzoom ?? 5;
@@ -361,14 +392,13 @@ function initMap() {
   map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
   map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
 
-  if (bounds) map.fitBounds(bounds, { padding: 50, duration: 0 });
-
   function updateZoomIndicator() {
     document.getElementById('map-zoom-value').textContent = map.getZoom().toFixed(1);
     document.getElementById('map-zoom-indicator').style.display = 'block';
   }
 
   map.on('zoom', () => { updateZoomIndicator(); checkZoomAlert(); });
+  map.on('idle', checkZoomAlert);
 
   map.on('load', () => {
     updateZoomIndicator();
@@ -567,6 +597,13 @@ function reset() {
       </svg>
       <span id="map-zoom-alert-text"></span>
       <button id="map-zoom-alert-btn"></button>
+    </div>
+    <div id="map-bounds-alert">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span id="map-bounds-alert-text"></span>
+      <button id="map-bounds-alert-btn"></button>
     </div>
     <div id="map-filter-chip">
       <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
