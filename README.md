@@ -1,4 +1,4 @@
-# Vector Tile Inspector
+# tilejson-inspector
 
 Outil d'inspection de fichiers TileJSON pour explorer les couches vectorielles et leurs attributs.
 

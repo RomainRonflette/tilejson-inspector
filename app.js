@@ -117,7 +117,7 @@ function renderApp() {
   document.getElementById('app-header').style.display = 'flex';
   document.getElementById('main').classList.add('visible');
 
-  document.getElementById('header-name').textContent = tilejson.name || 'TileJSON Inspector';
+  document.getElementById('header-name').textContent = tilejson.name || 'tilejson-inspector';
   document.getElementById('header-desc').textContent = tilejson.description || '';
   document.getElementById('header-zoom').textContent = `${tilejson.minzoom ?? '?'}–${tilejson.maxzoom ?? '?'}`;
   document.getElementById('header-layers-text').textContent =
@@ -650,7 +650,7 @@ function bindGeocoder() {
     if (q.length < 2) { close(); return; }
     debounce = setTimeout(async () => {
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5`, { signal, headers: { 'User-Agent': 'VectorTileInspector/1.0' } });
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5`, { signal, headers: { 'User-Agent': 'tilejson-inspector/1.0' } });
         suggestions = await res.json();
         render();
       } catch { /* aborted or network error */ }
