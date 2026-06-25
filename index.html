@@ -222,6 +222,24 @@
     }
     #map-zoom-indicator span { color: var(--text); }
 
+    /* Zoom alert */
+    #map-zoom-alert {
+      position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%);
+      background: rgba(245,158,11,0.95); color: #1a1000;
+      border-radius: 10px; padding: 10px 14px;
+      font-size: 12px; display: none; align-items: center; gap: 10px;
+      z-index: 10; backdrop-filter: blur(8px); white-space: nowrap;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    }
+    #map-zoom-alert svg { flex-shrink: 0; }
+    #map-zoom-alert span { line-height: 1.4; white-space: normal; max-width: 220px; }
+    #map-zoom-alert button {
+      background: rgba(0,0,0,0.15); border: none; color: inherit; cursor: pointer;
+      border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600;
+      font-family: inherit; flex-shrink: 0; transition: background 0.15s;
+    }
+    #map-zoom-alert button:hover { background: rgba(0,0,0,0.25); }
+
     /* reset button */
     #reset-btn { font-size: 12px; padding: 5px 12px; }
 
@@ -334,6 +352,13 @@
   <div id="map-container">
     <div id="map"></div>
     <div id="map-zoom-indicator">z&thinsp;<span id="map-zoom-value"></span></div>
+    <div id="map-zoom-alert">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <span id="map-zoom-alert-text"></span>
+      <button id="map-zoom-alert-btn"></button>
+    </div>
     <div id="map-filter-chip">
       <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
@@ -506,7 +531,36 @@
     const layer = allLayers.find(l => l.id === layerId);
     if (layer) showDetail(layer);
 
-    if (map) highlightSelectedLayer(layerId);
+    if (map) {
+      highlightSelectedLayer(layerId);
+      checkZoomAlert();
+    }
+  }
+
+  function checkZoomAlert() {
+    const alert = document.getElementById('map-zoom-alert');
+    if (!map || !selectedLayerId) { alert.style.display = 'none'; return; }
+
+    const layer = allLayers.find(l => l.id === selectedLayerId);
+    if (!layer) { alert.style.display = 'none'; return; }
+
+    const currentZoom = map.getZoom();
+    const minz = layer.minzoom ?? 0;
+    const maxz = layer.maxzoom ?? 22;
+
+    if (currentZoom >= minz && currentZoom <= maxz) {
+      alert.style.display = 'none';
+      return;
+    }
+
+    const targetZoom = currentZoom < minz ? minz : maxz;
+    const direction = currentZoom < minz ? 'Zoom avant' : 'Zoom arrière';
+    document.getElementById('map-zoom-alert-text').textContent =
+      `Couche visible entre z${minz} et z${maxz} (zoom actuel : z${currentZoom.toFixed(1)})`;
+    const btn = document.getElementById('map-zoom-alert-btn');
+    btn.textContent = direction + ` → z${targetZoom}`;
+    btn.onclick = () => map.easeTo({ zoom: targetZoom });
+    alert.style.display = 'flex';
   }
 
   // ── Detail panel ──
@@ -672,7 +726,7 @@
       document.getElementById('map-zoom-value').textContent = map.getZoom().toFixed(1);
       document.getElementById('map-zoom-indicator').style.display = 'block';
     }
-    map.on('zoom', updateZoomIndicator);
+    map.on('zoom', () => { updateZoomIndicator(); checkZoomAlert(); });
     map.on('load', () => {
       updateZoomIndicator();
       // Register hover cursor for all rendered layers
@@ -870,6 +924,13 @@
     mc.innerHTML = `
       <div id="map"></div>
       <div id="map-zoom-indicator" style="display:none">z&thinsp;<span id="map-zoom-value"></span></div>
+      <div id="map-zoom-alert" style="display:none">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <span id="map-zoom-alert-text"></span>
+        <button id="map-zoom-alert-btn"></button>
+      </div>
       <div id="map-filter-chip">
         <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
