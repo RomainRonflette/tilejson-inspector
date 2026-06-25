@@ -11,10 +11,13 @@
 
 <!-- Drop screen -->
 <div id="drop-screen">
-  <select class="lang-select btn" onchange="setLang(this.value)" style="position:absolute;top:12px;right:16px">
-    <option value="en">EN</option>
-    <option value="fr">FR</option>
-  </select>
+  <div style="position:absolute;top:12px;right:16px;display:flex;gap:8px;align-items:center">
+    <button class="btn help-open-btn" onclick="openHelp()" data-i18n="help.btn">Help</button>
+    <select class="lang-select btn" onchange="setLang(this.value)">
+      <option value="en">EN</option>
+      <option value="fr">FR</option>
+    </select>
+  </div>
   <div class="drop-box" id="drop-box">
     <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
       <path d="M12 16V8m0 0-3 3m3-3 3 3M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1"/>
@@ -40,10 +43,13 @@
 <!-- Header -->
 <header style="display:none" id="app-header">
   <h1 id="header-name">tilejson-inspector</h1>
-  <div class="meta">
+  <div class="header-info">
     <span id="header-desc"></span>
     <span><span data-i18n="header.zoom">Zoom</span> <strong id="header-zoom"></strong></span>
     <span id="header-layers-text"></span>
+  </div>
+  <div class="meta">
+    <button class="btn help-open-btn" onclick="openHelp()" data-i18n="help.btn">Help</button>
     <select class="lang-select btn" onchange="setLang(this.value)">
       <option value="en">EN</option>
       <option value="fr">FR</option>
@@ -116,6 +122,93 @@
     </div>
   </div>
 
+</div>
+
+<!-- Help modal -->
+<div id="help-modal" role="dialog" aria-modal="true" style="display:none">
+  <div class="help-backdrop" onclick="closeHelp()"></div>
+  <div class="help-dialog">
+    <div class="help-header">
+      <h2 data-i18n="help.title">How to use tilejson-inspector</h2>
+      <button class="help-close" onclick="closeHelp()" aria-label="Close">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="help-body">
+      <div class="help-section">
+        <div class="help-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M12 16V8m0 0-3 3m3-3 3 3M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1"/>
+          </svg>
+        </div>
+        <div class="help-section-content">
+          <div class="help-section-title" data-i18n="help.s1.title">Load a TileJSON</div>
+          <div class="help-section-body" data-i18n="help.s1.body"></div>
+        </div>
+      </div>
+      <div class="help-section">
+        <div class="help-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="help-section-content">
+          <div class="help-section-title" data-i18n="help.s2.title">Explore layers</div>
+          <div class="help-section-body" data-i18n="help.s2.body"></div>
+        </div>
+      </div>
+      <div class="help-section">
+        <div class="help-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+          </svg>
+        </div>
+        <div class="help-section-content">
+          <div class="help-section-title" data-i18n="help.s3.title">Filter by value</div>
+          <div class="help-section-body" data-i18n="help.s3.body"></div>
+        </div>
+      </div>
+      <div class="help-section">
+        <div class="help-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/><path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0z"/>
+          </svg>
+        </div>
+        <div class="help-section-content">
+          <div class="help-section-title" data-i18n="help.s4.title">Click on the map</div>
+          <div class="help-section-body" data-i18n="help.s4.body"></div>
+        </div>
+      </div>
+      <div class="help-section">
+        <div class="help-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </div>
+        <div class="help-section-content">
+          <div class="help-section-title" data-i18n="help.s5.title">Search a location</div>
+          <div class="help-section-body" data-i18n="help.s5.body"></div>
+        </div>
+      </div>
+      <div class="help-section">
+        <div class="help-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <div class="help-section-content">
+          <div class="help-section-title" data-i18n="help.s6.title">Zoom guidance</div>
+          <div class="help-section-body" data-i18n="help.s6.body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="help-footer">
+      <button class="btn primary" onclick="closeHelp()" data-i18n="help.close">Close</button>
+    </div>
+  </div>
 </div>
 
 <div id="error-toast"></div>

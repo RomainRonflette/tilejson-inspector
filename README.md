@@ -1,6 +1,9 @@
-# tilejson-inspector
+# TileJSON inspector
 
 A TileJSON file inspection tool for exploring vector layers and their attributes.
+
+## Use the inspector
+[👉 inspect tileJSON and vector map](https://romainronflette.github.io/tilejson-inspector/)
 
 ## Run locally
 
