@@ -1,19 +1,19 @@
 # tilejson-inspector
 
-Outil d'inspection de fichiers TileJSON pour explorer les couches vectorielles et leurs attributs.
+A TileJSON file inspection tool for exploring vector layers and their attributes.
 
-## Lancer en local
+## Run locally
 
-L'application nécessite un serveur HTTP local (les fetches sont bloqués en `file://`).
+The application requires a local HTTP server (fetches are blocked over `file://`).
 
 ```bash
 npx serve .
 ```
 
-ou avec Python :
+or with Python:
 
 ```bash
 python3 -m http.server 8080
 ```
 
-Puis ouvrir [http://localhost:8080](http://localhost:8080).
+Then open [http://localhost:8080](http://localhost:8080).
