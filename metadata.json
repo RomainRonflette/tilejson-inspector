@@ -1,0 +1,3466 @@
+{
+    "bounds":
+    [
+        -63.281249999999694,
+        -22.513825588484842,
+        55.987701416015867,
+        51.124212757826683
+    ],
+    "center":
+    [
+        -3.6467742919919139,
+        14.305193584670921
+    ],
+    "crs": "EPSG:3857",
+    "description": "TOPO",
+    "format": "pbf",
+    "maxzoom": 18,
+    "minzoom": 0,
+    "name": "PLAN.IGN",
+    "tiles":
+    [
+        "https://data.geopf.fr/tms/1.0.0/PLAN.IGN/{z}/{x}/{y}.pbf"
+    ],
+    "vector_layers":
+    [
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 689,
+                    "type": "character varying(2)"
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "SECTION"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_parcellaire_section",
+            "maxzoom": 18,
+            "minzoom": 18
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 5,
+                    "type": "text",
+                    "values":
+                    [
+                        "n99",
+                        "n10",
+                        "n25",
+                        "n0",
+                        "n50"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 14,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "SOURCE_CAPTEE",
+                        "BANC",
+                        "TOURBIERE",
+                        "FONTAINE",
+                        "MARAIS",
+                        "PLAN_D_EAU",
+                        "CASCADE",
+                        "RESURGENCE",
+                        "ESPACE_MARITIME",
+                        "BAIE",
+                        "EMBOUCHURE",
+                        "SOURCE",
+                        "POINT_D_EAU",
+                        "PERTE"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 11,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPA",
+                        "CRO",
+                        "WLD",
+                        "GUF",
+                        "SPM",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 36095,
+                    "type": "character varying"
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 26,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "HYD_SURF_1",
+                        "HYD_SURF_2",
+                        "HYD_SURF_2_T",
+                        "TYPO_D_5",
+                        "HYD_SURF_3",
+                        "HYD_SURF_4_T",
+                        "TYPO_D_7",
+                        "TYPO_D_6",
+                        "grand",
+                        "TYPO_D_3",
+                        "TYPO_D_10",
+                        "TYPO_D_8",
+                        "TYPO_D_9",
+                        "moyen",
+                        "TYPO_E_GE_cyan",
+                        "HYD_SURF_5_T",
+                        "HYD_SURF_5",
+                        "SOURCE",
+                        "ORO_GLACIER_2",
+                        "TYPO_D_4",
+                        "CASCADE",
+                        "TYPO_D_2",
+                        "TYPO_D_1",
+                        "ocean",
+                        "HYD_SURF_4",
+                        "mer"
+                    ]
+                }
+            },
+            "fieldsCount": 5,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_hydro_ponc",
+            "maxzoom": 18,
+            "minzoom": 0
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 5,
+                    "type": "text",
+                    "values":
+                    [
+                        "n99",
+                        "n10",
+                        "n25",
+                        "n0",
+                        "n50"
+                    ]
+                },
+                "rotation":
+                {
+                    "attribute": "rotation",
+                    "count": 1,
+                    "type": "integer"
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 78,
+                    "type": "text"
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 13,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPA",
+                        "CRO",
+                        "WLD",
+                        "GUF",
+                        "SPM",
+                        "FXX",
+                        "TRO",
+                        "JUA",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "bati_ponc",
+            "maxzoom": 18,
+            "minzoom": 3
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 4,
+                    "type": "text",
+                    "values":
+                    [
+                        "n25",
+                        "n0",
+                        "n10",
+                        "n50"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 16,
+                    "type": "character varying(255)",
+                    "values":
+                    [
+                        "VF_ELEC_3",
+                        "FUNI_CREMAILLERE",
+                        "VF_NON_EXPLOITEE",
+                        "TRANSPORT_URBAIN",
+                        "VF_3",
+                        "VF_2",
+                        "VF_ETROITE_1",
+                        "VF_EN_CONSTR",
+                        "VF_4",
+                        "VF_ETROITE_2",
+                        "VF_1",
+                        "VF_SERVICE",
+                        "VF_ELEC_1",
+                        "VF_ELEC_2",
+                        "VF_ETROITE",
+                        "VF_ELEC_4"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 5,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "GUF",
+                        "FXX",
+                        "REU",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "ferre",
+            "maxzoom": 18,
+            "minzoom": 7
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 4,
+                    "type": "text",
+                    "values":
+                    [
+                        "n25",
+                        "n0",
+                        "n10",
+                        "n50"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 15,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "ZONE_VIGNE",
+                        "COCOTERAIE",
+                        "ZONE_PEUPLERAIE",
+                        "ZONE_FORET_OUVERTE",
+                        "ZONE_MARAIS",
+                        "ZONE_VERGER",
+                        "ZONE_MANGROVE",
+                        "ZONE_FORET_FERMEE_MIXTE",
+                        "ZONE_FORET_FERMEE_FEUIL",
+                        "ZONE_LANDE_LIGNEUSE",
+                        "ZONE_MARAIS_SALANT",
+                        "ZONE_FORET_FERMEE_CONI",
+                        "HOUBLONNIERE",
+                        "ZONE_BOISEE",
+                        "ZONE_CANNE_BANANE"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 11,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "TRO",
+                        "GLO",
+                        "JUA",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "ocs_vegetation_surf",
+            "maxzoom": 18,
+            "minzoom": 7
+        },
+        {
+            "fields":
+            {
+                "fictif":
+                {
+                    "attribute": "fictif",
+                    "count": 2,
+                    "type": "boolean",
+                    "values":
+                    [
+                        "1",
+                        "0"
+                    ]
+                },
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 7,
+                    "type": "text",
+                    "values":
+                    [
+                        "n10",
+                        "n50_b",
+                        "n25",
+                        "n50_a",
+                        "n0",
+                        "n25_a",
+                        "n50"
+                    ]
+                },
+                "rond_point":
+                {
+                    "attribute": "rond_point",
+                    "count": 2,
+                    "type": "boolean",
+                    "values":
+                    [
+                        "1",
+                        "0"
+                    ]
+                },
+                "sens_circu":
+                {
+                    "attribute": "sens_circu",
+                    "count": 4,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "Double sens",
+                        "Sans objet",
+                        "Sens inverse",
+                        "Sens direct"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 30,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "LOCALE_4_SUP",
+                        "BRET_AUTO_PEAGE_1_SUP",
+                        "BRET_LOCALE_1_SUP",
+                        "PRINCIPALE_4_SUP",
+                        "BRET_LOCALE_SUP",
+                        "REGIONALE_CONSTR_SUP",
+                        "PRINCIPALE_3_SUP",
+                        "REGIONALE_4_SUP",
+                        "LOCALE_CONSTR_SUP",
+                        "AUTOROU_LIBRE_SUP",
+                        "REGIONALE_1_SUP",
+                        "LOCALE_2_SUP",
+                        "NON_REVETUE_CARRO_RESTREINT_SUP",
+                        "BRET_REGIONALE_SUP",
+                        "NON_CLASSEE_SUP",
+                        "PRINCIPALE_CONSTR_SUP",
+                        "AUTOROU_PEAGE_SUP",
+                        "BRET_AUTO_PEAGE_2_SUP",
+                        "BRET_PRINCIPALE_SUP",
+                        "REGIONALE_2_SUP",
+                        "NON_REVETUE_CARRO_SUP",
+                        "pas symbolisé",
+                        "PRINCIPALE_2_SUP",
+                        "BRET_AUTO_LIBRE_1_SUP",
+                        "PRINCIPALE_1_SUP",
+                        "NON_CLASSEE_RESTREINT_SUP",
+                        "LOCALE_3_SUP",
+                        "REGIONALE_3_SUP",
+                        "AUTOROU_CONSTR_SUP",
+                        "LOCALE_1_SUP"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 7,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 6,
+            "geometry": "GEOMETRY",
+            "id": "routier_route_sup",
+            "maxzoom": 18,
+            "minzoom": 7
+        },
+        {
+            "fields":
+            {
+                "indice_de_repetition":
+                {
+                    "attribute": "indice_de_repetition",
+                    "count": 5350,
+                    "type": "character varying"
+                },
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0"
+                    ]
+                },
+                "numero":
+                {
+                    "attribute": "numero",
+                    "count": 9207,
+                    "type": "character varying"
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 7,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "MYT",
+                        "SPM",
+                        "REU",
+                        "MTQ",
+                        "GLP",
+                        "GUF",
+                        "FXX"
+                    ]
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "ADRESSE"
+                    ]
+                }
+            },
+            "fieldsCount": 5,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_parcellaire_adresse_ponc",
+            "maxzoom": 18,
+            "minzoom": 18
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 9114,
+                    "type": "character varying(4)"
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "PARCELLE"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_parcellaire_parcelle",
+            "maxzoom": 18,
+            "minzoom": 18
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 5,
+                    "type": "text",
+                    "values":
+                    [
+                        "n99",
+                        "n10",
+                        "n25",
+                        "n0",
+                        "n50"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 7,
+                    "type": "text",
+                    "values":
+                    [
+                        "COURS_D_EAU",
+                        "COURS_D_EAU_TEMP",
+                        "COURS_D_EAU_MOY",
+                        "COURS_D_EAU_LAR",
+                        "AQUEDUC_AU_SOL",
+                        "CANAL",
+                        "COURS_D_EAU_TEMP_MOY"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 11,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPA",
+                        "CRO",
+                        "WLD",
+                        "GUF",
+                        "SPM",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                },
+                "toponyme":
+                {
+                    "attribute": "toponyme",
+                    "count": 72233,
+                    "type": "character varying"
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "hydro_reseau",
+            "maxzoom": 18,
+            "minzoom": 0
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "COURS_D_EAU_MOY_SOU",
+                        "AQUEDUC_SOU",
+                        "COURS_D_EAU_SOU"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 6,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "GUF",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "hydro_reseau_sou",
+            "maxzoom": 18,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 5,
+                    "type": "text",
+                    "values":
+                    [
+                        "n99",
+                        "n10",
+                        "n25",
+                        "n0",
+                        "n50"
+                    ]
+                },
+                "rotation":
+                {
+                    "attribute": "rotation",
+                    "count": 362,
+                    "type": "integer"
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 15,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPA",
+                        "CRO",
+                        "BAS",
+                        "WLD",
+                        "GUF",
+                        "SPM",
+                        "FXX",
+                        "TRO",
+                        "GLO",
+                        "JUA",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 114111,
+                    "type": "text"
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 49,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "ORO_COURBE",
+                        "ORO_ILE_2",
+                        "TYPO_G_2",
+                        "Island group",
+                        "Plateau",
+                        "Island",
+                        "Lowland",
+                        "ORO_GORGE_2",
+                        "ORO_GORGE_1",
+                        "Plain",
+                        "ORO_SOMMET_1",
+                        "TYPO_G_8",
+                        "ORO_SOMMET_3",
+                        "Basin",
+                        "ORO_CAP_2",
+                        "ORO_COURBE_GLACIER",
+                        "ORO_RELIEF_1_T",
+                        "TYPO_E_GE_marron",
+                        "Desert",
+                        "ORO_RELIEF_4",
+                        "Tundra",
+                        "Lake",
+                        "ORO_ILE_3",
+                        "Geoarea",
+                        "TYPO_G_5",
+                        "TYPO_G_1",
+                        "ORO_COURBE_ROCHER",
+                        "TYPO_G_9",
+                        "ORO_RELIEF_2_T",
+                        "TYPO_G_3",
+                        "ORO_ILE_1",
+                        "GROTTE",
+                        "ORO_SOMMET_2",
+                        "ORO_COL_1",
+                        "TYPO_G_4",
+                        "ORO_COL_2",
+                        "Gorge",
+                        "ORO_RELIEF_4_T",
+                        "ORO_RELIEF_2",
+                        "TYPO_G_6",
+                        "ORO_RELIEF_3_T",
+                        "Range/mtn",
+                        "ORO_RELIEF_3",
+                        "TYPO_G_7",
+                        "Valley",
+                        "Isthmus",
+                        "ORO_CAP_3",
+                        "ORO_CAP_1",
+                        "Pen/cape"
+                    ]
+                }
+            },
+            "fieldsCount": 5,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_oro_ponc",
+            "maxzoom": 18,
+            "minzoom": 3
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 25,
+                    "type": "text",
+                    "values":
+                    [
+                        "MUR_PIERRES_SECHES",
+                        "BARRAGE_LIN",
+                        "PORTIQUE_PORTUAIRE",
+                        "CABLE",
+                        "REMONTEE_MEC",
+                        "SPORT_MONTAGNE_LIN",
+                        "LIGNE_ELECTRIQUE",
+                        "TREMPLIN_SKI",
+                        "DIGUE",
+                        "PISTE_AERO_LIN",
+                        "PECHERIE_LIN",
+                        "PECHE_AU_CARRELET",
+                        "GRUE_PORTUAIRE",
+                        "RUINE_LIN",
+                        "PISTE_LUGE",
+                        "MUR",
+                        "PISTE_BOBSLEIGH",
+                        "HYDROCARBURES",
+                        "CONDUITE_MATIERES_P",
+                        "PELOTE_BASQ_LIN",
+                        "MUR_SOUTENEMENT",
+                        "FORTIF_LIN",
+                        "MUR_PARAVALANCHE",
+                        "QUAI",
+                        "TERRASSE"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 12,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPA",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "TRO",
+                        "GLO",
+                        "JUA",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "bati_lin",
+            "maxzoom": 18,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 6,
+                    "type": "text",
+                    "values":
+                    [
+                        "AQUEDUC_SUP",
+                        "COURS_D_EAU_MOY_SUP",
+                        "COURS_D_EAU_SUP_Hors_modele",
+                        "COURS_D_EAU_SUP",
+                        "COURS_D_EAU_MOY_SUP_Hors_modele",
+                        "CANAL_SUP"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 4,
+                    "type": "text",
+                    "values":
+                    [
+                        "GUF",
+                        "FXX",
+                        "MTQ",
+                        "REU"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "hydro_reseau_sup",
+            "maxzoom": 18,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "sens_circu":
+                {
+                    "attribute": "sens_circu",
+                    "count": 4,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "Double sens",
+                        "Sans objet",
+                        "Sens inverse",
+                        "Sens direct"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 6,
+                    "type": "text",
+                    "values":
+                    [
+                        "RUE_PIETONNE",
+                        "VOIE_VERTE",
+                        "SENTIER",
+                        "ESCALIER",
+                        "PISTE_CYCLABLE",
+                        "CHEMIN"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 12,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "CRO",
+                        "GUF",
+                        "SPM",
+                        "FXX",
+                        "TRO",
+                        "GLO",
+                        "JUA",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "routier_chemin",
+            "maxzoom": 18,
+            "minzoom": 11
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 16,
+                    "type": "text",
+                    "values":
+                    [
+                        "VF_ETROITE_SUP",
+                        "TRANSPORT_URBAIN_SUP",
+                        "VF_3_SUP",
+                        "VF_ETROITE_1_SUP",
+                        "VF_SERVICE_SUP",
+                        "VF_ELEC_1_SUP",
+                        "VF_2_SUP",
+                        "VF_EN_CONSTR_SUP",
+                        "VF_NON_EXPLOITEE_SUP",
+                        "VF_ELEC_4_SUP",
+                        "FUNI_CREMAILLERE_SUP",
+                        "VF_ETROITE_2_SUP",
+                        "VF_ELEC_2_SUP",
+                        "VF_1_SUP",
+                        "VF_ELEC_3_SUP",
+                        "VF_4_SUP"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 4,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "FXX",
+                        "MTQ",
+                        "REU"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "ferre_sup",
+            "maxzoom": 18,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "SECTION"
+                    ]
+                }
+            },
+            "fieldsCount": 2,
+            "geometry": "GEOMETRY",
+            "id": "parcellaire_section",
+            "maxzoom": 18,
+            "minzoom": 18
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 4,
+                    "type": "text",
+                    "values":
+                    [
+                        "n25",
+                        "n0",
+                        "n10",
+                        "n50"
+                    ]
+                },
+                "rotation":
+                {
+                    "attribute": "rotation",
+                    "count": 294,
+                    "type": "integer"
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 4,
+                    "type": "character varying(255)",
+                    "values":
+                    [
+                        "ENTREE_TUNNEL_PONC",
+                        "ROND_POINT_PONC",
+                        "PEAGE_PONC",
+                        "BARRIERE"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 7,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "routier_ponc",
+            "maxzoom": 18,
+            "minzoom": 7
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "sens_circu":
+                {
+                    "attribute": "sens_circu",
+                    "count": 4,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "Double sens",
+                        "Sans objet",
+                        "Sens inverse",
+                        "Sens direct"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 6,
+                    "type": "text",
+                    "values":
+                    [
+                        "SENTIER_SUP",
+                        "ESCALIER_SUP",
+                        "CHEMIN_SUP",
+                        "VOIE_VERTE_SUP",
+                        "PISTE_CYCLABLE_SUP",
+                        "RUE_PIETONNE_SUP"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 7,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "routier_chemin_sup",
+            "maxzoom": 18,
+            "minzoom": 11
+        },
+        {
+            "fields":
+            {},
+            "fieldsCount": 0,
+            "geometry": "GEOMETRY",
+            "id": "fond_opaque",
+            "maxzoom": 18,
+            "minzoom": 0
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 4,
+                    "type": "text",
+                    "values":
+                    [
+                        "n25",
+                        "n0",
+                        "n10",
+                        "n50"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 11,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "VIADUC",
+                        "PONT_MOBILE_LIN",
+                        "LIAISON_MARITIME",
+                        "PONT_PASSERELLE",
+                        "GUE_CHEMIN",
+                        "GUE_ROUTE",
+                        "BAC",
+                        "AQUEDUC",
+                        "BAC_AUTO",
+                        "PONT_TRANSBORDEUR",
+                        "PONT_LIN"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 7,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "routier_liaison",
+            "maxzoom": 18,
+            "minzoom": 7
+        },
+        {
+            "fields":
+            {
+                "fictif":
+                {
+                    "attribute": "fictif",
+                    "count": 2,
+                    "type": "boolean",
+                    "values":
+                    [
+                        "1",
+                        "0"
+                    ]
+                },
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 10,
+                    "type": "text",
+                    "values":
+                    [
+                        "n99",
+                        "n10",
+                        "n25",
+                        "n50_b",
+                        "n99_b",
+                        "n50_a",
+                        "n0",
+                        "n99_a",
+                        "n25_a",
+                        "n50"
+                    ]
+                },
+                "rond_point":
+                {
+                    "attribute": "rond_point",
+                    "count": 2,
+                    "type": "boolean",
+                    "values":
+                    [
+                        "1",
+                        "0"
+                    ]
+                },
+                "sens_circu":
+                {
+                    "attribute": "sens_circu",
+                    "count": 4,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "Double sens",
+                        "Sans objet",
+                        "Sens inverse",
+                        "Sens direct"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 30,
+                    "type": "text",
+                    "values":
+                    [
+                        "NON_CLASSEE_RESTREINT",
+                        "LOCALE_CONSTR",
+                        "BRET_REGIONALE",
+                        "BRET_PRINCIPALE",
+                        "LOCALE_2",
+                        "PRINCIPALE_CONSTR",
+                        "BRET_LOCALE_1",
+                        "PRINCIPALE_1",
+                        "BRET_AUTO_PEAGE_3",
+                        "AUTOROU_PEAGE",
+                        "LOCALE_4",
+                        "PRINCIPALE_4",
+                        "AUTOROU_LIBRE",
+                        "REGIONALE_3",
+                        "REGIONALE_CONSTR",
+                        "NON_REVETUE_CARRO",
+                        "BRET_LOCALE",
+                        "PRINCIPALE_3",
+                        "REGIONALE_2",
+                        "NON_CLASSEE",
+                        "NON_REVETUE_CARRO_RESTREINT",
+                        "REGIONALE_1",
+                        "LOCALE_3",
+                        "AUTOROU_CONSTR",
+                        "LOCALE_1",
+                        "BRET_AUTO_PEAGE_1",
+                        "BRET_AUTO_PEAGE_2",
+                        "BRET_AUTO_LIBRE_1",
+                        "REGIONALE_4",
+                        "PRINCIPALE_2"
+                    ]
+                },
+                "terminaison":
+                {
+                    "attribute": "terminaison",
+                    "count": 2,
+                    "type": "text",
+                    "values":
+                    [
+                        "round",
+                        "butt"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 8,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "WLD",
+                        "GUF",
+                        "SPM",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 7,
+            "geometry": "GEOMETRY",
+            "id": "routier_route",
+            "maxzoom": 18,
+            "minzoom": 3
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 12,
+                    "type": "text",
+                    "values":
+                    [
+                        "GRAVIERS_GALETS_SEC",
+                        "RECIF_CORAIL",
+                        "ZONE_SABLE_SEC",
+                        "ZONE_ROCHER_HYDRO",
+                        "ZONE_GLACIER",
+                        "GRAVIERS_GALETS_HUM",
+                        "ZONE_SABLE_HUMIDE",
+                        "ZONE_RAVINEE",
+                        "ZONE_EBOULIS",
+                        "ZONE_ROCHEUSE",
+                        "LAPIAZ",
+                        "FOND_CUVETTE_HUMIDE"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 13,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "CRO",
+                        "BAS",
+                        "GUF",
+                        "SPM",
+                        "FXX",
+                        "TRO",
+                        "GLO",
+                        "JUA",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "ocs_nature_sol_surf",
+            "maxzoom": 18,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0"
+                    ]
+                },
+                "nom_desabrege":
+                {
+                    "attribute": "nom_desabrege",
+                    "count": 1117261,
+                    "type": "text"
+                },
+                "nom_gauche":
+                {
+                    "attribute": "nom_gauche",
+                    "count": 1123963,
+                    "type": "character varying"
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 10,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "GLP",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "TRO",
+                        "GLO",
+                        "JUA",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_routier_odonyme_lin",
+            "maxzoom": 18,
+            "minzoom": 15
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 8,
+                    "type": "text",
+                    "values":
+                    [
+                        "SOURCE_CAPTEE",
+                        "FONTAINE",
+                        "AUTRE_HYDRO_PONC",
+                        "CASCADE",
+                        "RESURGENCE",
+                        "SOURCE",
+                        "POINT_D_EAU",
+                        "PERTE"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 8,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPA",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "hydro_ponc",
+            "maxzoom": 18,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 6,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "DALLE_DE_PROTECTION",
+                        "SURF_PEAGE",
+                        "CARREFOUR",
+                        "ESCALIER_SURF",
+                        "DALLE_URBAINE",
+                        "PARKING_SURF"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 7,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "GLP",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "routier_surf",
+            "maxzoom": 18,
+            "minzoom": 13
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 5,
+                    "type": "text",
+                    "values":
+                    [
+                        "n99",
+                        "n10",
+                        "n25",
+                        "n1",
+                        "n50"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 9,
+                    "type": "text",
+                    "values":
+                    [
+                        "BASSIN",
+                        "SURFACE_D_EAU_TEMP",
+                        "ZONE_MARAIS",
+                        "LAGON",
+                        "ZONE_MARINE",
+                        "SURFACE_D_EAU_TEMP_SOU",
+                        "SURFACE_D_EAU_SOU",
+                        "SURFACE_D_EAU",
+                        "ZONE_D_ESTRAN"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 15,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPA",
+                        "CRO",
+                        "BAS",
+                        "WLD",
+                        "GUF",
+                        "SPM",
+                        "FXX",
+                        "TRO",
+                        "GLO",
+                        "JUA",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                },
+                "toponyme":
+                {
+                    "attribute": "toponyme",
+                    "count": 15769,
+                    "type": "character varying"
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "hydro_surf",
+            "maxzoom": 18,
+            "minzoom": 0
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 4,
+                    "type": "text",
+                    "values":
+                    [
+                        "n25",
+                        "n0",
+                        "n10",
+                        "n50"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 7,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 65855,
+                    "type": "text"
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 29,
+                    "type": "character varying(255)",
+                    "values":
+                    [
+                        "TYPO_D_3_T",
+                        "HYD_LIN_3",
+                        "HYD_SURF_1",
+                        "HYD_SURF_2",
+                        "TYPO_D_4_T",
+                        "HYD_SURF_2_T",
+                        "TYPO_D_5",
+                        "TYPO_D_LIN_3",
+                        "HYD_SURF_3_T",
+                        "TYPO_D_5_T",
+                        "TYPO_D_LIN_2",
+                        "HYD_SURF_3",
+                        "HYD_SURF_4_T",
+                        "TYPO_D_LIN_4",
+                        "TYPO_D_7",
+                        "ORO_GLACIER_1",
+                        "HYD_LIN_4",
+                        "OCEAN_MER",
+                        "HYD_LIN_2",
+                        "TYPO_D_8",
+                        "HYD_LIN_5",
+                        "HYD_SURF_4",
+                        "HYD_SURF_5_T",
+                        "HYD_SURF_5",
+                        "HYD_LIN_1",
+                        "HYD_SURF_1_T",
+                        "ORO_GLACIER_2",
+                        "TYPO_D_4",
+                        "TYPO_D_LIN_1"
+                    ]
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_hydro_lin",
+            "maxzoom": 18,
+            "minzoom": 7
+        },
+        {
+            "fields":
+            {
+                "alti_sol":
+                {
+                    "attribute": "alti_sol",
+                    "count": 117112,
+                    "type": "double precision"
+                },
+                "hauteur":
+                {
+                    "attribute": "hauteur",
+                    "count": 4538,
+                    "type": "integer"
+                },
+                "isole":
+                {
+                    "attribute": "isole",
+                    "count": 1,
+                    "type": "boolean",
+                    "values":
+                    [
+                        "0"
+                    ]
+                },
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n5"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 47,
+                    "type": "text",
+                    "values":
+                    [
+                        "NECROPOLE_NATIONALE",
+                        "MULTI_SPORT_SURF",
+                        "RESERVOIR_INDUS_SURF",
+                        "MONUMENT_SURF",
+                        "BATI_SPORTIF",
+                        "FOOT_SURF",
+                        "PISTE_SPORT_SURF",
+                        "HANGAR",
+                        "MOSQUEE_SURF",
+                        "SERRE_SURF",
+                        "POSTE_ELEC_SURF",
+                        "ARC_TRIOMPHE_SURF",
+                        "CHAPELLE_SURF",
+                        "SPORT_INDIF_SURF",
+                        "FORTIF_SURF",
+                        "CENTRALE_PHOTOVOLTAIQUE",
+                        "MAIRIE",
+                        "BATI_GARE",
+                        "PECHERIE_SURF",
+                        "NATATION_SURF",
+                        "CHRETIEN_SURF",
+                        "BATI_COMMERCIAL",
+                        "RESERVOIR_EAU_SURF",
+                        "TOUR_MOULIN_SURF",
+                        "CHATEAU_EAU_SURF",
+                        "BATI_PUBLIC",
+                        "HANGAR_INDUSTRIEL",
+                        "RELIGIEUX_QQUE",
+                        "SYNAGOGUE_SURF",
+                        "CHATEAU_SURF",
+                        "PISTE_HERBE",
+                        "ECLUSE_SURF",
+                        "TENNIS_SURF",
+                        "PISTE_DUR",
+                        "BATI_PEAGE",
+                        "SILO_SURF",
+                        "BATI_QQUE",
+                        "BATI_INDUSTRIEL",
+                        "CIMETIERE_MILI_SURF",
+                        "HANGAR_PUBLIC",
+                        "ARENE_THEATRE",
+                        "AUTRE_CULTE_SURF",
+                        "BARRAGE_SURF",
+                        "HANGAR_COMMERCIAL",
+                        "EGLISE_SURF",
+                        "CIMETIERE_SURF",
+                        "MAIRIE_ANNEXE"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 12,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPA",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "TRO",
+                        "GLO",
+                        "JUA",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 6,
+            "geometry": "GEOMETRY",
+            "id": "bati_surf",
+            "maxzoom": 18,
+            "minzoom": 12
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 9,
+                    "type": "text",
+                    "values":
+                    [
+                        "CAVE",
+                        "POINT_RBF",
+                        "GOUFFRE",
+                        "GROTTE",
+                        "POINT_COTE",
+                        "AVEN",
+                        "POINT_COTE_TOPO",
+                        "FENETRE",
+                        "BLOC_ROCHEUX_ISOLE"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 8,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "CRO",
+                        "GUF",
+                        "SPM",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 7189,
+                    "type": "text"
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "oro_ponc",
+            "maxzoom": 18,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "rotation":
+                {
+                    "attribute": "rotation",
+                    "count": 1,
+                    "type": "integer"
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "BOIS",
+                        "FORET",
+                        "LIEU-DIT_NON_HABITE"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 9,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "CRO",
+                        "GUF",
+                        "SPM",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 291410,
+                    "type": "text"
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 21,
+                    "type": "text",
+                    "values":
+                    [
+                        "TYPO_B_8",
+                        "TYPO_E_GE",
+                        "TYPO_F_8",
+                        "OCS_FORET_1",
+                        "TYPO_B_4",
+                        "TYPO_F_3",
+                        "TYPO_F_4",
+                        "TYPO_B_7",
+                        "TYPO_B_11",
+                        "TYPO_B_10",
+                        "TYPO_F_2",
+                        "TYPO_F_5",
+                        "OCS_FORET_3",
+                        "OCS_FORET_2",
+                        "TYPO_F_9",
+                        "TYPO_F_7",
+                        "TYPO_F_10",
+                        "TYPO_F_6",
+                        "TYPO_B_9",
+                        "TYPO_E_GE_vert",
+                        "TYPO_B_5"
+                    ]
+                }
+            },
+            "fieldsCount": 6,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_ocs_ponc",
+            "maxzoom": 18,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "designation":
+                {
+                    "attribute": "designation",
+                    "count": 119,
+                    "type": "text"
+                },
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 32,
+                    "type": "text"
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 11,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "TRO",
+                        "GLO",
+                        "JUA",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 231397,
+                    "type": "text"
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 28,
+                    "type": "text",
+                    "values":
+                    [
+                        "TYPO_E_GE",
+                        "TYPO_C_7",
+                        "PHARE",
+                        "zai",
+                        "BAT_VILLAGE_DETRUIT",
+                        "TYPO_C_8",
+                        "AERODROME_PONC",
+                        "TYPO_A_8",
+                        "station",
+                        "zai_15",
+                        "BARRAGE_PONC",
+                        "TYPO_A_5",
+                        "BAT_ACTIVITE",
+                        "TYPO_C_9",
+                        "religieux_ge",
+                        "TYPO_A_7",
+                        "TYPO_A_9",
+                        "zai_beige",
+                        "divers_bati_ge",
+                        "divers_bati",
+                        "TYPO_C_4",
+                        "TYPO_A_6",
+                        "TYPO_C_6",
+                        "BAT_FORTIF",
+                        "zai_vert",
+                        "religieux",
+                        "AEROPORT_PONC",
+                        "AERODROME_IMPORT_PONC"
+                    ]
+                }
+            },
+            "fieldsCount": 6,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_bati_ponc",
+            "maxzoom": 18,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "nature":
+                {
+                    "attribute": "nature",
+                    "count": 70,
+                    "type": "character varying"
+                },
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 11,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "GLP",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "TRO",
+                        "GLO",
+                        "JUA",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "bati_zai",
+            "maxzoom": 18,
+            "minzoom": 13
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "PARCELLE"
+                    ]
+                }
+            },
+            "fieldsCount": 2,
+            "geometry": "GEOMETRY",
+            "id": "parcellaire_parcelle",
+            "maxzoom": 18,
+            "minzoom": 18
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 5,
+                    "type": "text",
+                    "values":
+                    [
+                        "n99",
+                        "n10",
+                        "n25",
+                        "n0",
+                        "n50"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 28,
+                    "type": "text",
+                    "values":
+                    [
+                        "LIM_CHAMP_TIR",
+                        "LIM_ZONE_NATURELLE",
+                        "LIM_COMMUNE",
+                        "LIM_DEPARTEMENT",
+                        "LAYON",
+                        "LIM_ZONE_SILENCE",
+                        "LIM_ARRONDISSEMENT",
+                        "LIM_ENCEINTE_MILI",
+                        "TRANCHEE",
+                        "VF_DEPOSEE",
+                        "LIM_ZONE_PROTEGEE",
+                        "LIM_PARCELLE_FORESTIERE",
+                        "LIM_PARC_NATUREL",
+                        "LIM_PARC_NATUREL_MARIN",
+                        "PARCELLE_FORESTIERE_AUTRE",
+                        "LIM_FORET_DOMANIALE",
+                        "LIM_ZONE_REGLEMENTEE",
+                        "LIM_RESERVE_NATURELLE",
+                        "LIM_ETAT_ETRANGER",
+                        "LIM_PARC_NATUREL_ILE",
+                        "CLOTURE",
+                        "LIM_ZONE_NATURELLE_ILE",
+                        "LIM_CANTON",
+                        "LIM_ZONE_PERI_PARC",
+                        "LIM_REGION",
+                        "LIM_ENCEINTE_MILITAIRE",
+                        "LIM_ETAT",
+                        "LIM_COTE"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 9,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "WLD",
+                        "GUF",
+                        "FXX",
+                        "GLO",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "limite_lin",
+            "maxzoom": 18,
+            "minzoom": 0
+        },
+        {
+            "fields":
+            {
+                "hors_zone":
+                {
+                    "attribute": "hors_zone",
+                    "count": 2,
+                    "type": "boolean",
+                    "values":
+                    [
+                        "0",
+                        "1"
+                    ]
+                },
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 9,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "CNV_GLACIER_NORMALE",
+                        "CNV_GLACIER_MAITRESSE",
+                        "CNV_NORMALE",
+                        "CNV_MAITRESSE",
+                        "CUVETTE_MAITRESSE",
+                        "CUVETTE_NORMALE",
+                        "CNV_ROCHER_NORMALE",
+                        "CNV_INTERCALAIRE",
+                        "CNV_ROCHER_MAITRESSE"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 7,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 307,
+                    "type": "text"
+                }
+            },
+            "fieldsCount": 5,
+            "geometry": "GEOMETRY",
+            "id": "oro_courbe",
+            "maxzoom": 17,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 4,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n50",
+                        "n25"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 7,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 11169,
+                    "type": "character varying"
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 4,
+                    "type": "text",
+                    "values":
+                    [
+                        "NC",
+                        "Autoroute",
+                        "Départementale",
+                        "Nationale"
+                    ]
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_routier_numero_lin",
+            "maxzoom": 17,
+            "minzoom": 7
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 16,
+                    "type": "text",
+                    "values":
+                    [
+                        "VF_FERRO_ROUTIER_SOU",
+                        "VF_3_SOU",
+                        "VF_TUNNEL_MANCHE_SOU",
+                        "VF_1_SOU",
+                        "VF_ETROITE_1_SOU",
+                        "VF_ETROITE_SOU",
+                        "VF_2_SOU",
+                        "VF_ELEC_3_SOU",
+                        "VF_ELEC_4_SOU",
+                        "VF_SERVICE_SOU",
+                        "VF_NON_EXPLOITEE_SOU",
+                        "VF_ETROITE_2_SOU",
+                        "VF_ELEC_1_SOU",
+                        "FUNI_CREMAILLERE_SOU",
+                        "VF_ELEC_2_SOU",
+                        "TRANSPORT_URBAIN_SOU"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 2,
+                    "type": "text",
+                    "values":
+                    [
+                        "FXX",
+                        "REU"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "ferre_sou",
+            "maxzoom": 17,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 4,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "BARRE_ROCH_ISOLEE",
+                        "LIGNE_DESC_ZONE_ROCHEUSE",
+                        "CREVASSE",
+                        "COULEE_EBOULIS"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 8,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "GLP",
+                        "SPA",
+                        "CRO",
+                        "GUF",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "ocs_lin",
+            "maxzoom": 17,
+            "minzoom": 13
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 5,
+                    "type": "text",
+                    "values":
+                    [
+                        "n99",
+                        "n10",
+                        "n25",
+                        "n0",
+                        "n50"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 5,
+                    "type": "text",
+                    "values":
+                    [
+                        "N_A",
+                        "LIEU-DIT-HABITE",
+                        "QUARTIER",
+                        "COMMUNE_CHEF_LIEU",
+                        "COMMUNE_FUSIONNEE"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 9,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "WLD",
+                        "GUF",
+                        "SPM",
+                        "FXX",
+                        "JUA",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 579748,
+                    "type": "character varying"
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 39,
+                    "type": "text",
+                    "values":
+                    [
+                        "TYPO_E_GE",
+                        "BAT_COMMUNE_ASSOCIEE_T",
+                        "BAT_COMMUNE_1_T",
+                        "pays 3",
+                        "commune 2",
+                        "BAT_COMMUNE_ASSOCIEE",
+                        "TYPO_A_4",
+                        "BAT_COMMUNE_4_T",
+                        "BAT_COMMUNE_2_T",
+                        "TYPO_A_8",
+                        "BAT_COMMUNE_3",
+                        "BAT_COMMUNE_5",
+                        "TYPO_A_2",
+                        "commune 1",
+                        "TYPO_A_10",
+                        "TYPO_A_5",
+                        "commune 3",
+                        "BAT_QUARTIER_T",
+                        "BAT_CHEF_LIEU_COM",
+                        "pays 2",
+                        "TYPO_A_1",
+                        "BAT_ANCIENNE_COM",
+                        "BAT_MAIRIE",
+                        "TYPO_A_7",
+                        "BAT_COMMUNE_1",
+                        "TYPO_A_9",
+                        "BAT_HAMEAU_T",
+                        "continent",
+                        "BAT_CHEF_LIEU_COM_T",
+                        "BAT_ANCIENNE_COM_T",
+                        "BAT_QUARTIER",
+                        "TYPO_A_3",
+                        "BAT_HAMEAU",
+                        "TYPO_A_6",
+                        "BAT_COMMUNE_4",
+                        "BAT_COMMUNE_3_T",
+                        "pays 1",
+                        "BAT_COMMUNE_2",
+                        "BAT_COMMUNE_5_T"
+                    ]
+                }
+            },
+            "fieldsCount": 5,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_localite_ponc",
+            "maxzoom": 17,
+            "minzoom": 0
+        },
+        {
+            "fields":
+            {
+                "borne_sous":
+                {
+                    "attribute": "borne_sous",
+                    "count": 16591,
+                    "type": "character varying"
+                },
+                "borne_sur":
+                {
+                    "attribute": "borne_sur",
+                    "count": 16769,
+                    "type": "character varying"
+                },
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "n1"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 48,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "PRINCIPALE_1_SOU",
+                        "LOCALE_2_SOU",
+                        "REGIONALE_1_SOU",
+                        "NON_CLASSEE_RESTREINT",
+                        "CHEMIN",
+                        "REGIONALE_1_SUP",
+                        "REGIONALE_3_SUP",
+                        "PRINCIPALE_2_SUP",
+                        "REGIONALE_2",
+                        "NON_CLASSEE",
+                        "RUE_PIETONNE_SUP",
+                        "PRINCIPALE_2",
+                        "REGIONALE_2_SUP",
+                        "SENTIER_SOU",
+                        "NON_CLASSEE_SUP",
+                        "NON_REVETUE_CARRO_RESTREINT",
+                        "LOCALE_3_SOU",
+                        "SENTIER",
+                        "ESCALIER_SOU",
+                        "REGIONALE_3",
+                        "LOCALE_1_SOU",
+                        "REGIONALE_2_SOU",
+                        "LOCALE_3_SUP",
+                        "LOCALE_3",
+                        "PRINCIPALE_3_SUP",
+                        "NON_CLASSEE_SOU",
+                        "PRINCIPALE_1",
+                        "SENTIER_FICTIF",
+                        "NON_REVETUE_CARRO_SUP",
+                        "RUE_PIETONNE_SOU",
+                        "PRINCIPALE_3",
+                        "LOCALE_2",
+                        "CHEMIN_SUP",
+                        "LOCALE_2_SUP",
+                        "NON_CLASSEE_RESTREINT_SOU",
+                        "VOIE_VERTE",
+                        "NON_REVETUE_CARRO",
+                        "PRINCIPALE_3_SOU",
+                        "PRINCIPALE_1_SUP",
+                        "ESCALIER",
+                        "SENTIER_SUP",
+                        "NON_CLASSEE_RESTREINT_SUP",
+                        "RUE_PIETONNE",
+                        "NON_REVETUE_CARRO_RESTREINT_SUP",
+                        "REGIONALE_1",
+                        "LOCALE_1",
+                        "PISTE_CYCLABLE",
+                        "LOCALE_1_SUP"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 7,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "MYT",
+                        "SPM",
+                        "REU",
+                        "MTQ",
+                        "GLP",
+                        "GUF",
+                        "FXX"
+                    ]
+                }
+            },
+            "fieldsCount": 5,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_routier_borne",
+            "maxzoom": 17,
+            "minzoom": 17
+        },
+        {
+            "fields":
+            {
+                "fictif":
+                {
+                    "attribute": "fictif",
+                    "count": 2,
+                    "type": "boolean",
+                    "values":
+                    [
+                        "0",
+                        "1"
+                    ]
+                },
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 7,
+                    "type": "text",
+                    "values":
+                    [
+                        "n10",
+                        "n25",
+                        "n50_b",
+                        "n50_a",
+                        "n0",
+                        "n25_a",
+                        "n50"
+                    ]
+                },
+                "rond_point":
+                {
+                    "attribute": "rond_point",
+                    "count": 2,
+                    "type": "boolean",
+                    "values":
+                    [
+                        "0",
+                        "1"
+                    ]
+                },
+                "sens_circu":
+                {
+                    "attribute": "sens_circu",
+                    "count": 3,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "Double sens",
+                        "Sens inverse",
+                        "Sens direct"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 28,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "BRET_AUTO_LIBRE_1_SOU",
+                        "AUTOROU_LIBRE_SOU",
+                        "REGIONALE_1_SOU",
+                        "PRINCIPALE_3_SOU",
+                        "LOCALE_1_SOU",
+                        "BRET_LOCALE_SOU",
+                        "PRINCIPALE_4_SOU",
+                        "NON_CLASSEE_RESTREINT_SOU",
+                        "LOCALE_4_SOU",
+                        "AUTOROU_PEAGE_SOU",
+                        "PRINCIPALE_2_SOU",
+                        "PRINCIPALE_1_SOU",
+                        "BRET_REGIONALE_SOU",
+                        "LOCALE_3_SOU",
+                        "PRINCIPALE_CONSTR_SOU",
+                        "LOCALE_2_SOU",
+                        "REGIONALE_2_SOU",
+                        "AUTOROU_LIBRE",
+                        "NON_REVETUE_CARRO_SOU",
+                        "REGIONALE_4_SOU",
+                        "NON_REVETUE_CARRO_RESTREINT_SOU",
+                        "LOCALE_CONSTR_SOU",
+                        "BRET_PRINCIPALE_SOU",
+                        "REGIONALE_3_SOU",
+                        "NON_CLASSEE_SOU",
+                        "BRET_AUTO_PEAGE_2_SOU",
+                        "PRINCIPALE_2",
+                        "BRET_AUTO_PEAGE_1_SOU"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 4,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "MTQ",
+                        "FXX",
+                        "REU"
+                    ]
+                }
+            },
+            "fieldsCount": 6,
+            "geometry": "GEOMETRY",
+            "id": "routier_route_sou",
+            "maxzoom": 17,
+            "minzoom": 7
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 3,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "LEVEE",
+                        "TALUS",
+                        "CARRIERE_LIN"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 7,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "GLP",
+                        "SPM",
+                        "GUF",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "oro_lin",
+            "maxzoom": 17,
+            "minzoom": 13
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "sens_circu":
+                {
+                    "attribute": "sens_circu",
+                    "count": 4,
+                    "type": "character varying",
+                    "values":
+                    [
+                        "Double sens",
+                        "Sans objet",
+                        "Sens inverse",
+                        "Sens direct"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 6,
+                    "type": "text",
+                    "values":
+                    [
+                        "VOIE_VERTE_SOU",
+                        "ESCALIER_SOU",
+                        "PISTE_CYCLABLE_SOU",
+                        "CHEMIN_SOU",
+                        "SENTIER_SOU",
+                        "RUE_PIETONNE_SOU"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 4,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "MTQ",
+                        "FXX",
+                        "REU"
+                    ]
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "routier_chemin_sou",
+            "maxzoom": 17,
+            "minzoom": 11
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 2,
+                    "type": "text",
+                    "values":
+                    [
+                        "n0",
+                        "n10"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "LAISSE_BASSES_MERS",
+                        "LAISSE_HAUTES_MERS",
+                        "LAISSES_HAUTES_MERS"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 14,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "SPA",
+                        "CRO",
+                        "BAS",
+                        "GUF",
+                        "SPM",
+                        "FXX",
+                        "TRO",
+                        "GLO",
+                        "JUA",
+                        "REU",
+                        "MYT",
+                        "EUR",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "hydro_laisse",
+            "maxzoom": 17,
+            "minzoom": 12
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 6,
+                    "type": "text",
+                    "values":
+                    [
+                        "n99",
+                        "n10",
+                        "n2",
+                        "n25",
+                        "n1",
+                        "n50"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 2,
+                    "type": "text",
+                    "values":
+                    [
+                        "ZONE_INDUS_ACTI",
+                        "ZONE_BATI"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 8,
+                    "type": "text",
+                    "values":
+                    [
+                        "GLP",
+                        "WLD",
+                        "GUF",
+                        "SPM",
+                        "FXX",
+                        "REU",
+                        "MYT",
+                        "MTQ"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "bati_zone_surf",
+            "maxzoom": 14,
+            "minzoom": 3
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 2,
+                    "type": "text",
+                    "values":
+                    [
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 2,
+                    "type": "text",
+                    "values":
+                    [
+                        "RESERVE_NATURELLE_PONC",
+                        "RESERVE_NATURELLE"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "FXX"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "limite_ponc",
+            "maxzoom": 12,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n25",
+                        "n10",
+                        "n50"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "FXX"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 609,
+                    "type": "text"
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 11,
+                    "type": "character varying(255)",
+                    "values":
+                    [
+                        "LIM_PARC_1",
+                        "LIM_MILI_1",
+                        "LIM_PARC_2",
+                        "PARC_MARIN_2",
+                        "RESERVE_NATURELLE_PONC",
+                        "LIM_MILI_4",
+                        "LIM_MILI_2",
+                        "LIM_PARC_3",
+                        "LIM_PARC_4",
+                        "PARC_2",
+                        "LIM_MILI_3"
+                    ]
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_limite_ponc",
+            "maxzoom": 12,
+            "minzoom": 7
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 2,
+                    "type": "text",
+                    "values":
+                    [
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "FXX"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 1700,
+                    "type": "text"
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 22,
+                    "type": "text",
+                    "values":
+                    [
+                        "ORO_ILE_2",
+                        "BAT_VILLE_NOUVELLE",
+                        "ORO_RELIEF_1",
+                        "ORO_GORGE_2",
+                        "ORO_GORGE_1",
+                        "ORO_SOMMET_1",
+                        "ORO_TERROIR_COTE",
+                        "ORO_SOMMET_3",
+                        "ORO_CAP_2",
+                        "ORO_RELIEF_1_T",
+                        "ORO_RELIEF_4",
+                        "ORO_ILE_3",
+                        "ORO_TERROIR",
+                        "ORO_RELIEF_2_T",
+                        "ORO_SOMMET_2",
+                        "ORO_COL_2",
+                        "ORO_RELIEF_4_T",
+                        "ORO_RELIEF_2",
+                        "ORO_RELIEF_3_T",
+                        "ORO_RELIEF_3",
+                        "ORO_CAP_3",
+                        "ORO_CAP_1"
+                    ]
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_oro_lin",
+            "maxzoom": 12,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 2,
+                    "type": "text",
+                    "values":
+                    [
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "FXX"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 150,
+                    "type": "text"
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "FER_NOM",
+                        "FER_OUVRAGE",
+                        "FER_NOM_T"
+                    ]
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_ferre_lin",
+            "maxzoom": 12,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "n25",
+                        "n10",
+                        "n50"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "FXX"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 65,
+                    "type": "text"
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 2,
+                    "type": "character varying(255)",
+                    "values":
+                    [
+                        "LIAISON_MARITIME",
+                        "LIAISON_MAR"
+                    ]
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_routier_liaison_lin",
+            "maxzoom": 12,
+            "minzoom": 7
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 2,
+                    "type": "text",
+                    "values":
+                    [
+                        "n10",
+                        "n25"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "FXX"
+                    ]
+                },
+                "texte":
+                {
+                    "attribute": "texte",
+                    "count": 1655,
+                    "type": "text"
+                },
+                "txt_typo":
+                {
+                    "attribute": "txt_typo",
+                    "count": 3,
+                    "type": "text",
+                    "values":
+                    [
+                        "OCS_FORET_1",
+                        "OCS_FORET_3",
+                        "OCS_FORET_2"
+                    ]
+                }
+            },
+            "fieldsCount": 4,
+            "geometry": "GEOMETRY",
+            "id": "toponyme_ocs_lin",
+            "maxzoom": 12,
+            "minzoom": 10
+        },
+        {
+            "fields":
+            {
+                "niveau":
+                {
+                    "attribute": "niveau",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "n99"
+                    ]
+                },
+                "symbo":
+                {
+                    "attribute": "symbo",
+                    "count": 8,
+                    "type": "text",
+                    "values":
+                    [
+                        "HYPSO_4000",
+                        "HYPSO_200",
+                        "HYPSO_100",
+                        "GLACIER",
+                        "HYPSO_3000",
+                        "HYPSO_5000",
+                        "HYPSO_0",
+                        "HYPSO_1000"
+                    ]
+                },
+                "territoire":
+                {
+                    "attribute": "territoire",
+                    "count": 1,
+                    "type": "text",
+                    "values":
+                    [
+                        "WLD"
+                    ]
+                }
+            },
+            "fieldsCount": 3,
+            "geometry": "GEOMETRY",
+            "id": "oro_relief",
+            "maxzoom": 6,
+            "minzoom": 0
+        }
+    ]
+}
