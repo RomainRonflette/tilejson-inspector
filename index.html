@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TileJSON Inspector</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -38,37 +39,19 @@
     header {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
-      padding: 12px 20px;
+      padding: 10px 20px;
       display: flex;
       align-items: center;
       gap: 16px;
       flex-shrink: 0;
     }
-    header h1 {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: 0.01em;
-    }
-    header .meta {
-      display: flex;
-      gap: 12px;
-      margin-left: auto;
-      align-items: center;
-    }
-    header .meta span {
-      font-size: 12px;
-      color: var(--text-dim);
-    }
+    header h1 { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: 0.01em; }
+    header .meta { display: flex; gap: 12px; margin-left: auto; align-items: center; }
+    header .meta span { font-size: 12px; color: var(--text-dim); }
     header .meta strong { color: var(--text); }
 
     /* ── Drop zone ── */
-    #drop-screen {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    #drop-screen { flex: 1; display: flex; align-items: center; justify-content: center; }
     .drop-box {
       border: 2px dashed var(--border);
       border-radius: 16px;
@@ -79,265 +62,204 @@
       max-width: 520px;
       width: 90%;
     }
-    .drop-box:hover, .drop-box.drag-over {
-      border-color: var(--accent);
-      background: rgba(79,126,248,0.06);
-    }
+    .drop-box:hover, .drop-box.drag-over { border-color: var(--accent); background: rgba(79,126,248,0.06); }
     .drop-box svg { color: var(--accent); margin-bottom: 16px; }
     .drop-box h2 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
     .drop-box p { color: var(--text-dim); font-size: 13px; margin-bottom: 20px; }
     .drop-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
     .btn {
-      padding: 8px 18px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--surface2);
-      color: var(--text);
-      font-size: 13px;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
+      padding: 8px 18px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text); font-size: 13px;
+      cursor: pointer; transition: background 0.15s, border-color 0.15s; font-family: inherit;
     }
     .btn:hover { background: var(--accent-dim); border-color: var(--accent); }
     .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
     .btn.primary:hover { background: #3d6de0; }
     #file-input { display: none; }
-
-    /* URL input row */
-    .url-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
+    .url-row { display: flex; gap: 8px; margin-top: 12px; }
     .url-row input {
-      flex: 1;
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      color: var(--text);
-      font-size: 13px;
-      outline: none;
+      flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text); font-size: 13px; outline: none;
       transition: border-color 0.15s;
     }
     .url-row input:focus { border-color: var(--accent); }
     .url-row input::placeholder { color: var(--text-dim); }
 
-    /* ── Main layout ── */
-    #app { flex: 1; display: none; overflow: hidden; }
-    #app.visible { display: flex; }
+    /* ── Main 3-column layout ── */
+    #main { flex: 1; display: none; overflow: hidden; }
+    #main.visible { display: flex; }
 
-    /* ── Sidebar ── */
+    /* ── Sidebar (col 1) ── */
     #sidebar {
-      width: 300px;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
+      width: 240px; flex-shrink: 0;
+      display: flex; flex-direction: column;
       border-right: 1px solid var(--border);
-      background: var(--surface);
-      overflow: hidden;
+      background: var(--surface); overflow: hidden;
     }
-    .sidebar-header {
-      padding: 12px 14px 10px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-    .sidebar-header .search-wrap {
-      position: relative;
-    }
+    .sidebar-header { padding: 12px 14px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .sidebar-header .search-wrap { position: relative; }
     .sidebar-header input {
-      width: 100%;
-      padding: 7px 10px 7px 32px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      color: var(--text);
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.15s;
+      width: 100%; padding: 7px 10px 7px 32px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg); color: var(--text);
+      font-size: 13px; outline: none; transition: border-color 0.15s;
     }
     .sidebar-header input:focus { border-color: var(--accent); }
     .sidebar-header input::placeholder { color: var(--text-dim); }
     .search-icon {
-      position: absolute;
-      left: 9px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-dim);
-      pointer-events: none;
+      position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
+      color: var(--text-dim); pointer-events: none;
     }
-    .layer-count {
-      font-size: 11px;
-      color: var(--text-dim);
-      margin-top: 8px;
-      padding: 0 2px;
-    }
-
-    #layer-list {
-      overflow-y: auto;
-      flex: 1;
-    }
+    .layer-count { font-size: 11px; color: var(--text-dim); margin-top: 8px; padding: 0 2px; }
+    #layer-list { overflow-y: auto; flex: 1; }
     #layer-list::-webkit-scrollbar { width: 5px; }
     #layer-list::-webkit-scrollbar-track { background: transparent; }
     #layer-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
     .layer-item {
-      padding: 10px 14px;
-      cursor: pointer;
-      border-bottom: 1px solid var(--border);
-      transition: background 0.1s;
+      padding: 10px 14px; cursor: pointer;
+      border-bottom: 1px solid var(--border); transition: background 0.1s;
     }
     .layer-item:hover { background: var(--surface2); }
     .layer-item.active { background: var(--accent-dim); border-left: 3px solid var(--accent); padding-left: 11px; }
-    .layer-item .name {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text);
-      word-break: break-all;
-    }
-    .layer-item .badges {
-      display: flex;
-      gap: 5px;
-      margin-top: 5px;
-      flex-wrap: wrap;
-    }
+    .layer-item .name { font-size: 13px; font-weight: 500; color: var(--text); word-break: break-all; }
+    .layer-item .badges { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
     .badge {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: var(--tag-bg);
-      color: var(--tag-text);
-      border: 1px solid var(--border);
-      white-space: nowrap;
+      font-size: 10px; padding: 2px 6px; border-radius: 4px;
+      background: var(--tag-bg); color: var(--tag-text);
+      border: 1px solid var(--border); white-space: nowrap;
     }
     .badge.geom { color: var(--green); }
     .badge.zoom { color: var(--orange); }
     .badge.fields { color: var(--purple); }
 
-    /* ── Detail panel ── */
+    /* ── Detail panel (col 2) ── */
     #detail {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px;
+      width: 340px; flex-shrink: 0;
+      display: flex; flex-direction: column;
+      border-right: 1px solid var(--border); overflow: hidden;
     }
-    #detail::-webkit-scrollbar { width: 6px; }
-    #detail::-webkit-scrollbar-track { background: transparent; }
-    #detail::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
+    #detail-scroll { flex: 1; overflow-y: auto; padding: 20px; }
+    #detail-scroll::-webkit-scrollbar { width: 6px; }
+    #detail-scroll::-webkit-scrollbar-track { background: transparent; }
+    #detail-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
     #detail .empty {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      color: var(--text-dim);
-      gap: 10px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; color: var(--text-dim); gap: 10px;
     }
     #detail .empty svg { opacity: 0.3; }
-
-    .detail-title {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      word-break: break-all;
-    }
-    .detail-meta {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 24px;
-    }
-
+    .detail-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; word-break: break-all; }
+    .detail-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
     .section-title {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-dim);
-      margin-bottom: 10px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 10px;
     }
-
-    .fields-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    .fields-grid { display: flex; flex-direction: column; gap: 8px; }
     .field-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 16px;
-      transition: border-color 0.15s;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 14px; transition: border-color 0.15s;
     }
     .field-card:hover { border-color: var(--accent-dim); }
-    .field-header {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      margin-bottom: 6px;
-    }
-    .field-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--accent);
-      font-family: 'SF Mono', 'Fira Code', monospace;
-    }
+    .field-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+    .field-name { font-size: 13px; font-weight: 600; color: var(--accent); font-family: 'SF Mono', 'Fira Code', monospace; }
     .field-type {
-      font-size: 11px;
-      color: var(--text-dim);
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      background: var(--bg);
-      padding: 2px 7px;
-      border-radius: 4px;
-      border: 1px solid var(--border);
+      font-size: 11px; color: var(--text-dim); font-family: 'SF Mono', 'Fira Code', monospace;
+      background: var(--bg); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border);
     }
-    .field-count {
-      margin-left: auto;
-      font-size: 11px;
-      color: var(--text-dim);
-    }
-    .field-values {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-top: 8px;
-    }
+    .field-count { margin-left: auto; font-size: 11px; color: var(--text-dim); }
+    .field-values { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
     .value-tag {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 5px;
-      background: var(--tag-bg);
-      color: var(--tag-text);
-      border: 1px solid var(--border);
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      cursor: default;
+      font-size: 11px; padding: 3px 8px; border-radius: 5px;
+      background: var(--tag-bg); color: var(--tag-text);
+      border: 1px solid var(--border); font-family: 'SF Mono', 'Fira Code', monospace;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s, color 0.15s;
+      user-select: none;
     }
     .value-tag:hover { border-color: var(--accent); }
-    .no-values {
-      font-size: 12px;
-      color: var(--text-dim);
-      font-style: italic;
+    .value-tag.selected {
+      background: var(--accent); border-color: var(--accent);
+      color: #fff;
     }
+    .no-values { font-size: 12px; color: var(--text-dim); font-style: italic; }
 
-    /* reset button in header */
-    #reset-btn {
-      font-size: 12px;
-      padding: 5px 12px;
+    /* ── Map container (col 3) ── */
+    #map-container { flex: 1; position: relative; overflow: hidden; }
+    #map { width: 100%; height: 100%; background: var(--bg); }
+    .map-no-tiles {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: var(--text-dim); gap: 12px; text-align: center; padding: 40px;
     }
+    .map-no-tiles svg { opacity: 0.25; }
+    .map-no-tiles p { font-size: 13px; line-height: 1.6; }
 
-    /* error toast */
+    /* Filter chip overlay */
+    #map-filter-chip {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      background: rgba(79,126,248,0.92); color: #fff;
+      border-radius: 20px; padding: 5px 8px 5px 12px;
+      font-size: 12px; display: none; align-items: center; gap: 6px;
+      z-index: 10; backdrop-filter: blur(8px); white-space: nowrap;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    }
+    #map-filter-chip svg { flex-shrink: 0; opacity: 0.8; }
+    #map-filter-text { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; }
+    #map-filter-chip button {
+      background: rgba(255,255,255,0.2); border: none; color: #fff; cursor: pointer;
+      border-radius: 50%; width: 18px; height: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; line-height: 1; padding: 0; flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    #map-filter-chip button:hover { background: rgba(255,255,255,0.35); }
+
+    /* Zoom indicator */
+    #map-zoom-indicator {
+      position: absolute; top: 12px; right: 12px;
+      background: rgba(26,29,39,0.88); border: 1px solid var(--border);
+      border-radius: 6px; padding: 4px 9px;
+      font-size: 12px; font-family: 'SF Mono', 'Fira Code', monospace;
+      color: var(--text-dim); z-index: 10; backdrop-filter: blur(8px);
+      pointer-events: none; display: none;
+    }
+    #map-zoom-indicator span { color: var(--text); }
+
+    /* reset button */
+    #reset-btn { font-size: 12px; padding: 5px 12px; }
+
+    /* ── MapLibre dark theme ── */
+    .maplibregl-popup-content {
+      background: var(--surface) !important; color: var(--text) !important;
+      border: 1px solid var(--border) !important; border-radius: 8px !important;
+      font-size: 12px !important; padding: 10px 12px !important;
+      max-width: 260px !important; max-height: 280px !important; overflow-y: auto !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6) !important; font-family: inherit !important;
+    }
+    .maplibregl-popup-close-button { color: var(--text-dim) !important; font-size: 16px !important; padding: 4px 8px !important; }
+    .maplibregl-popup-close-button:hover { color: var(--text) !important; background: transparent !important; }
+    .maplibregl-popup-tip { border-top-color: var(--border) !important; }
+    .popup-layer-name {
+      font-weight: 600; font-size: 12px; margin-bottom: 7px;
+      color: var(--accent); font-family: 'SF Mono', 'Fira Code', monospace;
+      padding-bottom: 6px; border-bottom: 1px solid var(--border);
+    }
+    .popup-table { width: 100%; border-collapse: collapse; }
+    .popup-table td { padding: 3px 0; border-bottom: 1px solid rgba(46,51,80,0.5); vertical-align: top; }
+    .popup-table tr:last-child td { border-bottom: none; }
+    .popup-table td:first-child { color: var(--text-dim); width: 45%; padding-right: 8px; }
+    .popup-table td:last-child { word-break: break-all; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; }
+    .popup-table tr.filtered td:first-child { color: var(--accent); }
+    .popup-empty { color: var(--text-dim); font-style: italic; }
+    .maplibregl-ctrl-group { background: var(--surface) !important; border: 1px solid var(--border) !important; }
+    .maplibregl-ctrl-group button { background-color: var(--surface) !important; color: var(--text) !important; }
+    .maplibregl-ctrl-group button:hover { background-color: var(--surface2) !important; }
+    .maplibregl-ctrl-attrib { background: rgba(26,29,39,0.8) !important; color: var(--text-dim) !important; }
+    .maplibregl-ctrl-attrib a { color: var(--text-dim) !important; }
+
+    /* ── Toast ── */
     #error-toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #3b1f1f;
-      border: 1px solid var(--red);
-      color: var(--red);
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 13px;
-      display: none;
-      z-index: 100;
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: #3b1f1f; border: 1px solid var(--red); color: var(--red);
+      padding: 10px 20px; border-radius: 8px; font-size: 13px;
+      display: none; z-index: 100;
     }
   </style>
 </head>
@@ -352,9 +274,7 @@
     <h2>TileJSON Inspector</h2>
     <p>Chargez un fichier TileJSON pour explorer ses couches vectorielles et leurs attributs.</p>
     <div class="drop-actions">
-      <button class="btn primary" onclick="document.getElementById('file-input').click()">
-        Ouvrir un fichier
-      </button>
+      <button class="btn primary" onclick="document.getElementById('file-input').click()">Ouvrir un fichier</button>
     </div>
     <div class="url-row" style="margin-top: 16px;">
       <input type="text" id="url-input" placeholder="https://… ou chemin vers un TileJSON" />
@@ -362,10 +282,14 @@
     </div>
     <input type="file" id="file-input" accept=".json,application/json">
     <p style="margin-top: 14px; font-size: 11px; color: var(--text-dim);">Glissez-déposez un fichier .json ici</p>
+    <div id="schema-list" style="display:none; margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px; text-align:left;">
+      <p style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 10px;">Schémas disponibles</p>
+      <div id="schema-items" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+    </div>
   </div>
 </div>
 
-<!-- Main app -->
+<!-- Header -->
 <header style="display:none" id="app-header">
   <h1 id="header-name">TileJSON Inspector</h1>
   <div class="meta">
@@ -376,7 +300,10 @@
   </div>
 </header>
 
-<div id="app">
+<!-- Main 3-column layout -->
+<div id="main">
+
+  <!-- Col 1: Layer list -->
   <div id="sidebar">
     <div class="sidebar-header">
       <div class="search-wrap">
@@ -389,22 +316,77 @@
     </div>
     <div id="layer-list"></div>
   </div>
+
+  <!-- Col 2: Attribute detail -->
   <div id="detail">
-    <div class="empty" id="detail-empty">
-      <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/>
-      </svg>
-      <span>Sélectionnez une couche</span>
+    <div id="detail-scroll">
+      <div class="empty" id="detail-empty">
+        <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/>
+        </svg>
+        <span>Sélectionnez une couche</span>
+      </div>
+      <div id="detail-content" style="display:none"></div>
     </div>
-    <div id="detail-content" style="display:none"></div>
   </div>
+
+  <!-- Col 3: Map -->
+  <div id="map-container">
+    <div id="map"></div>
+    <div id="map-zoom-indicator">z&thinsp;<span id="map-zoom-value"></span></div>
+    <div id="map-filter-chip">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+      </svg>
+      <span id="map-filter-text"></span>
+      <button onclick="clearValueFilter()" title="Supprimer le filtre">×</button>
+    </div>
+  </div>
+
 </div>
 
 <div id="error-toast"></div>
 
+<script src="./vector_schema/schemas.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.js"></script>
 <script>
+  // ── State ──
   let tilejson = null;
   let allLayers = [];
+  let selectedLayerId = null;
+  let selectedField = null;
+  let selectedValueJson = null; // JSON.stringify of the selected value
+  let map = null;
+  const layerColors = {};
+  const baseFilters = {};
+
+  // ── Color palette ──
+  const HUE_PALETTE = [210, 150, 30, 280, 0, 180, 330, 90, 250, 60, 310, 120, 200, 45, 270, 160, 15, 240, 75, 350];
+  function assignLayerColor(index) {
+    const hue = HUE_PALETTE[index % HUE_PALETTE.length];
+    return `hsl(${hue}, 65%, ${52 + (index % 3) * 6}%)`;
+  }
+
+  // ── Schema list (populated from vector_schema/schemas.js) ──
+  function initSchemaList() {
+    const schemas = window.VECTOR_SCHEMAS;
+    if (!schemas || !schemas.length) return;
+
+    const list = document.getElementById('schema-list');
+    const items = document.getElementById('schema-items');
+    schemas.forEach(({ name, file, data }) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      btn.textContent = name;
+      btn.addEventListener('click', () => {
+        if (data) { loadData(data); return; }
+        showError(`Données manquantes pour « ${name} ».`);
+      });
+      items.appendChild(btn);
+    });
+    list.style.display = 'block';
+  }
+  initSchemaList();
 
   // ── Drag & drop ──
   const dropBox = document.getElementById('drop-box');
@@ -416,11 +398,9 @@
     const file = e.dataTransfer.files[0];
     if (file) readFile(file);
   });
-
   document.getElementById('file-input').addEventListener('change', e => {
     if (e.target.files[0]) readFile(e.target.files[0]);
   });
-
   document.getElementById('url-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') loadFromUrl();
   });
@@ -428,12 +408,8 @@
   function readFile(file) {
     const reader = new FileReader();
     reader.onload = e => {
-      try {
-        const data = JSON.parse(e.target.result);
-        loadData(data);
-      } catch {
-        showError('Fichier JSON invalide.');
-      }
+      try { loadData(JSON.parse(e.target.result)); }
+      catch { showError('Fichier JSON invalide.'); }
     };
     reader.readAsText(file);
   }
@@ -444,8 +420,7 @@
     try {
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      loadData(data);
+      loadData(await res.json());
     } catch (err) {
       showError(`Impossible de charger : ${err.message}`);
     }
@@ -458,14 +433,14 @@
     }
     tilejson = data;
     allLayers = data.vector_layers || data.layers || [];
+    allLayers.forEach((layer, i) => { layerColors[layer.id] = assignLayerColor(i); });
     renderApp();
   }
 
   function renderApp() {
-    // Header
     document.getElementById('drop-screen').style.display = 'none';
     document.getElementById('app-header').style.display = 'flex';
-    document.getElementById('app').classList.add('visible');
+    document.getElementById('main').classList.add('visible');
 
     document.getElementById('header-name').textContent = tilejson.name || 'TileJSON Inspector';
     document.getElementById('header-desc').textContent = tilejson.description || '';
@@ -473,52 +448,65 @@
     document.getElementById('header-layers').textContent = allLayers.length;
 
     renderLayerList(allLayers);
+    initMap();
   }
 
+  // ── Layer list ──
   function renderLayerList(layers) {
     const list = document.getElementById('layer-list');
-    document.getElementById('layer-count').textContent = `${layers.length} / ${allLayers.length} couche${allLayers.length > 1 ? 's' : ''}`;
+    document.getElementById('layer-count').textContent =
+      `${layers.length} / ${allLayers.length} couche${allLayers.length > 1 ? 's' : ''}`;
     list.innerHTML = '';
     layers.forEach(layer => {
       const item = document.createElement('div');
-      item.className = 'layer-item';
+      item.className = 'layer-item' + (layer.id === selectedLayerId ? ' active' : '');
       item.dataset.id = layer.id;
-      const fieldCount = layer.fieldsCount ?? Object.keys(layer.fields || {}).length;
+      const fc = layer.fieldsCount ?? Object.keys(layer.fields || {}).length;
       item.innerHTML = `
-        <div class="name">${layer.id}</div>
+        <div class="name">${esc(layer.id)}</div>
         <div class="badges">
-          <span class="badge geom">${layer.geometry || 'GEOMETRY'}</span>
+          <span class="badge geom">${esc(layer.geometry || 'GEOMETRY')}</span>
           <span class="badge zoom">z${layer.minzoom ?? '?'}–${layer.maxzoom ?? '?'}</span>
-          <span class="badge fields">${fieldCount} champ${fieldCount !== 1 ? 's' : ''}</span>
+          <span class="badge fields">${fc} champ${fc !== 1 ? 's' : ''}</span>
         </div>`;
-      item.addEventListener('click', () => {
-        document.querySelectorAll('.layer-item').forEach(el => el.classList.remove('active'));
-        item.classList.add('active');
-        showDetail(layer);
-      });
+      item.addEventListener('click', () => selectLayer(layer.id));
       list.appendChild(item);
     });
   }
 
   function filterLayers(q) {
     const lower = q.toLowerCase();
-    const filtered = allLayers.filter(l => l.id.toLowerCase().includes(lower));
-    renderLayerList(filtered);
+    renderLayerList(allLayers.filter(l => l.id.toLowerCase().includes(lower)));
   }
 
-  const TYPE_COLOR = {
-    'text': '#3ecf8e',
-    'character varying': '#3ecf8e',
-    'integer': '#f59e0b',
-    'double precision': '#f59e0b',
-    'boolean': '#a78bfa',
-  };
+  // ── Layer selection ──
+  function selectLayer(layerId) {
+    if (selectedLayerId === layerId) return;
 
+    // Clear value filter when switching layers
+    if (selectedField !== null) {
+      selectedField = null;
+      selectedValueJson = null;
+      document.getElementById('map-filter-chip').style.display = 'none';
+    }
+
+    selectedLayerId = layerId;
+
+    document.querySelectorAll('.layer-item').forEach(el =>
+      el.classList.toggle('active', el.dataset.id === layerId)
+    );
+
+    const layer = allLayers.find(l => l.id === layerId);
+    if (layer) showDetail(layer);
+
+    if (map) highlightSelectedLayer(layerId);
+  }
+
+  // ── Detail panel ──
+  const TYPE_COLORS = { text: '#3ecf8e', 'character varying': '#3ecf8e', integer: '#f59e0b', 'double precision': '#f59e0b', boolean: '#a78bfa' };
   function typeColor(type) {
     const t = (type || '').toLowerCase();
-    for (const [k, v] of Object.entries(TYPE_COLOR)) {
-      if (t.startsWith(k)) return v;
-    }
+    for (const [k, v] of Object.entries(TYPE_COLORS)) { if (t.startsWith(k)) return v; }
     return '#7a82a0';
   }
 
@@ -531,66 +519,369 @@
     const fieldKeys = Object.keys(fields);
     const fieldCount = layer.fieldsCount ?? fieldKeys.length;
 
-    let fieldsHtml = '';
-    if (fieldKeys.length === 0) {
-      fieldsHtml = '<p style="color:var(--text-dim); font-size:13px;">Aucun attribut défini pour cette couche.</p>';
-    } else {
-      fieldsHtml = '<div class="fields-grid">';
-      fieldKeys.forEach(key => {
-        const f = fields[key];
-        const values = f.values || [];
-        const color = typeColor(f.type);
-        const countStr = f.count != null ? `${f.count.toLocaleString('fr')} entité${f.count > 1 ? 's' : ''}` : '';
-
-        let valuesHtml = '';
-        if (values.length > 0) {
-          valuesHtml = `<div class="field-values">${values.map(v => `<span class="value-tag">${v}</span>`).join('')}</div>`;
-        } else {
-          valuesHtml = `<div class="no-values">Valeurs libres (${countStr ? countStr : 'aucune statistique'})</div>`;
-        }
-
-        fieldsHtml += `
-          <div class="field-card">
-            <div class="field-header">
-              <span class="field-name">${key}</span>
-              <span class="field-type" style="color:${color}">${f.type || 'inconnu'}</span>
-              ${countStr ? `<span class="field-count">${countStr}</span>` : ''}
-            </div>
-            ${valuesHtml}
-          </div>`;
-      });
-      fieldsHtml += '</div>';
-    }
-
+    // Build outer HTML
     content.innerHTML = `
-      <div class="detail-title">${layer.id}</div>
+      <div class="detail-title">${esc(layer.id)}</div>
       <div class="detail-meta">
-        <span class="badge geom" style="font-size:12px; padding:4px 10px;">${layer.geometry || 'GEOMETRY'}</span>
-        <span class="badge zoom" style="font-size:12px; padding:4px 10px;">Zoom ${layer.minzoom ?? '?'} → ${layer.maxzoom ?? '?'}</span>
-        <span class="badge fields" style="font-size:12px; padding:4px 10px;">${fieldCount} champ${fieldCount !== 1 ? 's' : ''}</span>
+        <span class="badge geom" style="font-size:12px;padding:4px 10px">${esc(layer.geometry || 'GEOMETRY')}</span>
+        <span class="badge zoom" style="font-size:12px;padding:4px 10px">Zoom ${layer.minzoom ?? '?'} → ${layer.maxzoom ?? '?'}</span>
+        <span class="badge fields" style="font-size:12px;padding:4px 10px">${fieldCount} champ${fieldCount !== 1 ? 's' : ''}</span>
       </div>
       <div class="section-title">Attributs</div>
-      ${fieldsHtml}
-    `;
+      <div class="fields-grid" id="fields-grid"></div>`;
+
+    const grid = content.querySelector('#fields-grid');
+
+    if (fieldKeys.length === 0) {
+      grid.innerHTML = '<p style="color:var(--text-dim);font-size:13px">Aucun attribut défini pour cette couche.</p>';
+      return;
+    }
+
+    fieldKeys.forEach(key => {
+      const f = fields[key];
+      const values = f.values || [];
+      const countStr = f.count != null ? `${f.count.toLocaleString('fr')} entité${f.count > 1 ? 's' : ''}` : '';
+
+      const card = document.createElement('div');
+      card.className = 'field-card';
+
+      const header = document.createElement('div');
+      header.className = 'field-header';
+      header.innerHTML = `
+        <span class="field-name">${esc(key)}</span>
+        <span class="field-type" style="color:${typeColor(f.type)}">${esc(f.type || 'inconnu')}</span>
+        ${countStr ? `<span class="field-count">${esc(countStr)}</span>` : ''}`;
+      card.appendChild(header);
+
+      if (values.length > 0) {
+        const valContainer = document.createElement('div');
+        valContainer.className = 'field-values';
+        values.forEach(v => {
+          const rawJson = JSON.stringify(v);
+          const tag = document.createElement('span');
+          tag.className = 'value-tag';
+          tag.textContent = String(v);
+          tag.title = 'Filtrer sur la carte';
+          tag.dataset.field = key;
+          tag.dataset.raw = rawJson;
+          if (key === selectedField && rawJson === selectedValueJson) {
+            tag.classList.add('selected');
+          }
+          tag.addEventListener('click', () => selectValue(key, v, rawJson));
+          valContainer.appendChild(tag);
+        });
+        card.appendChild(valContainer);
+      } else {
+        const noVal = document.createElement('div');
+        noVal.className = 'no-values';
+        noVal.textContent = `Valeurs libres (${countStr || 'aucune statistique'})`;
+        card.appendChild(noVal);
+      }
+
+      grid.appendChild(card);
+    });
   }
 
+  // ── Value filter ──
+  function selectValue(field, rawValue, rawJson) {
+    const isSame = field === selectedField && rawJson === selectedValueJson;
+
+    // Clear selected tag styles
+    document.querySelectorAll('.value-tag').forEach(el => el.classList.remove('selected'));
+
+    if (isSame) {
+      selectedField = null;
+      selectedValueJson = null;
+      clearMapValueFilter();
+      return;
+    }
+
+    selectedField = field;
+    selectedValueJson = rawJson;
+
+    // Mark the clicked tag
+    document.querySelectorAll(`.value-tag[data-field="${CSS.escape(field)}"][data-raw='${rawJson.replace(/'/g, "\\'")}']`)
+      .forEach(el => el.classList.add('selected'));
+
+    // Show filter chip
+    const displayVal = typeof rawValue === 'string' ? `"${rawValue}"` : String(rawValue);
+    document.getElementById('map-filter-text').textContent = `${field} = ${displayVal}`;
+    document.getElementById('map-filter-chip').style.display = 'flex';
+
+    if (map && selectedLayerId) applyMapValueFilter(selectedLayerId, field, rawValue);
+  }
+
+  function clearValueFilter() {
+    selectedField = null;
+    selectedValueJson = null;
+    document.querySelectorAll('.value-tag').forEach(el => el.classList.remove('selected'));
+    document.getElementById('map-filter-chip').style.display = 'none';
+    if (map && selectedLayerId) {
+      // Restore layer highlight without value filter
+      highlightSelectedLayer(selectedLayerId);
+    }
+  }
+
+  // ── Map initialization ──
+  function initMap() {
+    const hasTiles = tilejson.tiles && tilejson.tiles.length > 0;
+
+    if (!hasTiles) {
+      document.getElementById('map').style.display = 'none';
+      document.getElementById('map-container').innerHTML += `
+        <div class="map-no-tiles">
+          <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/>
+          </svg>
+          <p>Ce TileJSON ne contient pas d'URL de tuiles.<br>La carte n'est pas disponible.</p>
+        </div>`;
+      return;
+    }
+
+    const center = tilejson.center;
+    const bounds = tilejson.bounds;
+
+    const opts = {
+      container: 'map',
+      style: buildMapStyle(),
+      attributionControl: true,
+    };
+
+    if (center && center.length >= 2) {
+      opts.center = [center[0], center[1]];
+      opts.zoom = center[2] ?? tilejson.minzoom ?? 5;
+    } else {
+      opts.center = [2.35, 46.5];
+      opts.zoom = tilejson.minzoom ?? 5;
+    }
+
+    map = new maplibregl.Map(opts);
+    map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+    map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
+
+    if (bounds) map.fitBounds(bounds, { padding: 50, duration: 0 });
+
+    function updateZoomIndicator() {
+      document.getElementById('map-zoom-value').textContent = map.getZoom().toFixed(1);
+      document.getElementById('map-zoom-indicator').style.display = 'block';
+    }
+    map.on('zoom', updateZoomIndicator);
+    map.on('load', () => {
+      updateZoomIndicator();
+      // Register hover cursor for all rendered layers
+      getAllMapLayerIds().forEach(id => {
+        map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; });
+        map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
+      });
+
+      if (selectedLayerId) highlightSelectedLayer(selectedLayerId);
+    });
+
+    // Click → popup + select layer
+    map.on('click', e => {
+      const features = map.queryRenderedFeatures(e.point, { layers: getAllMapLayerIds() });
+      if (!features.length) return;
+
+      const feat = features[0];
+      const sourceLayer = feat.layer['source-layer'];
+      const props = feat.properties || {};
+
+      if (sourceLayer !== selectedLayerId) selectLayer(sourceLayer);
+
+      const entries = Object.entries(props);
+      let html = `<div class="popup-layer-name">${esc(sourceLayer)}</div>`;
+      if (entries.length === 0) {
+        html += '<span class="popup-empty">Aucun attribut</span>';
+      } else {
+        html += '<table class="popup-table">';
+        entries.forEach(([k, v]) => {
+          const isFiltered = k === selectedField;
+          html += `<tr${isFiltered ? ' class="filtered"' : ''}><td>${esc(k)}</td><td>${esc(String(v))}</td></tr>`;
+        });
+        html += '</table>';
+      }
+
+      new maplibregl.Popup({ maxWidth: '260px' })
+        .setLngLat(e.lngLat)
+        .setHTML(html)
+        .addTo(map);
+    });
+  }
+
+  // ── Map style ──
+  function buildMapStyle() {
+    const layers = [{ id: 'background', type: 'background', paint: { 'background-color': '#0f1117' } }];
+    allLayers.forEach(layer => layers.push(...getMapLayers(layer)));
+    return {
+      version: 8,
+      glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+      sources: {
+        tiles: {
+          type: 'vector',
+          tiles: tilejson.tiles,
+          minzoom: tilejson.minzoom ?? 0,
+          maxzoom: tilejson.maxzoom ?? 22,
+          ...(tilejson.attribution ? { attribution: tilejson.attribution } : {}),
+        },
+      },
+      layers,
+    };
+  }
+
+  function getMapLayers(layer) {
+    const color = layerColors[layer.id];
+    const { isPolygon, isLine, isPoint } = geomFlags(layer);
+    const result = [];
+    const src = { source: 'tiles', 'source-layer': layer.id };
+
+    function add(id, type, filter, paint) {
+      baseFilters[id] = filter;
+      result.push({ id, type, ...src, filter, paint });
+    }
+
+    if (isPolygon) {
+      add(`${layer.id}--fill`, 'fill', ['==', ['geometry-type'], 'Polygon'], { 'fill-color': color, 'fill-opacity': 0.3 });
+      add(`${layer.id}--outline`, 'line', ['==', ['geometry-type'], 'Polygon'], { 'line-color': color, 'line-opacity': 0.7, 'line-width': 1 });
+    }
+    if (isLine) {
+      add(`${layer.id}--line`, 'line', ['==', ['geometry-type'], 'LineString'], { 'line-color': color, 'line-opacity': 0.75, 'line-width': 1.5 });
+    }
+    if (isPoint) {
+      add(`${layer.id}--circle`, 'circle', ['==', ['geometry-type'], 'Point'], {
+        'circle-color': color, 'circle-opacity': 0.85,
+        'circle-radius': 4, 'circle-stroke-width': 1, 'circle-stroke-color': '#0f1117',
+      });
+    }
+
+    return result;
+  }
+
+  function geomFlags(layer) {
+    const g = (layer.geometry || '').toUpperCase();
+    const unknown = !g || g === 'GEOMETRY';
+    return {
+      isPolygon: unknown || g.includes('POLYGON'),
+      isLine: unknown || g.includes('LINE'),
+      isPoint: unknown || g.includes('POINT'),
+    };
+  }
+
+  function getAllMapLayerIds() {
+    const ids = [];
+    allLayers.forEach(layer => {
+      const { isPolygon, isLine, isPoint } = geomFlags(layer);
+      if (isPolygon) { ids.push(`${layer.id}--fill`); ids.push(`${layer.id}--outline`); }
+      if (isLine) ids.push(`${layer.id}--line`);
+      if (isPoint) ids.push(`${layer.id}--circle`);
+    });
+    return ids;
+  }
+
+  // ── Map highlight logic ──
+  function highlightSelectedLayer(layerId) {
+    if (!map) return;
+    allLayers.forEach(layer => {
+      const isSelected = layer.id === layerId;
+      const color = layerColors[layer.id];
+      const { isPolygon, isLine, isPoint } = geomFlags(layer);
+
+      if (isPolygon) {
+        sp(layer.id + '--fill', 'fill-color', color);
+        sp(layer.id + '--fill', 'fill-opacity', isSelected ? 0.42 : 0.04);
+        sp(layer.id + '--outline', 'line-color', color);
+        sp(layer.id + '--outline', 'line-opacity', isSelected ? 0.9 : 0.06);
+        sp(layer.id + '--outline', 'line-width', isSelected ? 1.5 : 1);
+      }
+      if (isLine) {
+        sp(layer.id + '--line', 'line-color', color);
+        sp(layer.id + '--line', 'line-opacity', isSelected ? 0.9 : 0.06);
+        sp(layer.id + '--line', 'line-width', isSelected ? 2.5 : 1.5);
+      }
+      if (isPoint) {
+        sp(layer.id + '--circle', 'circle-color', color);
+        sp(layer.id + '--circle', 'circle-opacity', isSelected ? 0.9 : 0.06);
+        sp(layer.id + '--circle', 'circle-radius', isSelected ? 5 : 4);
+      }
+    });
+  }
+
+  function applyMapValueFilter(layerId, field, rawValue) {
+    if (!map) return;
+    const layer = allLayers.find(l => l.id === layerId);
+    if (!layer) return;
+    const { isPolygon, isLine, isPoint } = geomFlags(layer);
+    const color = layerColors[layerId];
+
+    // Use paint expressions: matching features get accent color + full opacity; others dimmed
+    const matchExpr = ['==', ['get', field], rawValue];
+
+    if (isPolygon) {
+      sp(layerId + '--fill', 'fill-color', ['case', matchExpr, '#4f7ef8', color]);
+      sp(layerId + '--fill', 'fill-opacity', ['case', matchExpr, 0.55, 0.03]);
+      sp(layerId + '--outline', 'line-color', ['case', matchExpr, '#4f7ef8', color]);
+      sp(layerId + '--outline', 'line-opacity', ['case', matchExpr, 1, 0.05]);
+      sp(layerId + '--outline', 'line-width', ['case', matchExpr, 2, 1]);
+    }
+    if (isLine) {
+      sp(layerId + '--line', 'line-color', ['case', matchExpr, '#4f7ef8', color]);
+      sp(layerId + '--line', 'line-opacity', ['case', matchExpr, 1, 0.05]);
+      sp(layerId + '--line', 'line-width', ['case', matchExpr, 3, 1.5]);
+    }
+    if (isPoint) {
+      sp(layerId + '--circle', 'circle-color', ['case', matchExpr, '#4f7ef8', color]);
+      sp(layerId + '--circle', 'circle-opacity', ['case', matchExpr, 1, 0.05]);
+      sp(layerId + '--circle', 'circle-radius', ['case', matchExpr, 7, 4]);
+    }
+  }
+
+  function sp(id, prop, value) {
+    if (map && map.getLayer(id)) map.setPaintProperty(id, prop, value);
+  }
+
+  // ── Reset ──
   function reset() {
-    tilejson = null;
-    allLayers = [];
+    tilejson = null; allLayers = []; selectedLayerId = null;
+    selectedField = null; selectedValueJson = null;
+    Object.keys(layerColors).forEach(k => delete layerColors[k]);
+    Object.keys(baseFilters).forEach(k => delete baseFilters[k]);
+
+    if (map) { map.remove(); map = null; }
+
     document.getElementById('drop-screen').style.display = 'flex';
     document.getElementById('app-header').style.display = 'none';
-    document.getElementById('app').classList.remove('visible');
+    document.getElementById('main').classList.remove('visible');
     document.getElementById('detail-empty').style.display = 'flex';
     document.getElementById('detail-content').style.display = 'none';
+    document.getElementById('map-filter-chip').style.display = 'none';
     document.getElementById('file-input').value = '';
     document.getElementById('url-input').value = '';
     document.getElementById('search').value = '';
+    document.getElementById('layer-list').innerHTML = '';
+
+    // Restore map container if no-tiles placeholder was added
+    const mc = document.getElementById('map-container');
+    mc.innerHTML = `
+      <div id="map"></div>
+      <div id="map-zoom-indicator" style="display:none">z&thinsp;<span id="map-zoom-value"></span></div>
+      <div id="map-filter-chip">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        </svg>
+        <span id="map-filter-text"></span>
+        <button onclick="clearValueFilter()" title="Supprimer le filtre">×</button>
+      </div>`;
+  }
+
+  // ── Utils ──
+  function esc(str) {
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   function showError(msg) {
     const t = document.getElementById('error-toast');
-    t.textContent = msg;
-    t.style.display = 'block';
+    t.textContent = msg; t.style.display = 'block';
     setTimeout(() => { t.style.display = 'none'; }, 4000);
   }
 </script>
