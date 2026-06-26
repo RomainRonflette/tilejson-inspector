@@ -141,6 +141,7 @@
       </button>
     </div>
     <div class="help-body">
+      <div class="help-body-left">
       <div class="help-section">
         <div class="help-icon">
           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -208,11 +209,26 @@
           <div class="help-section-body" data-i18n="help.s6.body"></div>
         </div>
       </div>
+      </div>
+      <div class="help-body-right">
+        <figure class="help-screenshot">
+          <img src="img/screenshot_home.webp" alt="Drop zone" onclick="openLightbox(this.src)" title="Click to enlarge">
+          <figcaption data-i18n="help.caption.home">Drop zone</figcaption>
+        </figure>
+        <figure class="help-screenshot">
+          <img src="img/screenshot_inspector.webp" alt="Inspector" onclick="openLightbox(this.src)" title="Click to enlarge">
+          <figcaption data-i18n="help.caption.inspector">Inspector</figcaption>
+        </figure>
+      </div>
     </div>
     <div class="help-footer">
       <button class="btn primary" onclick="closeHelp()" data-i18n="help.close">Close</button>
     </div>
   </div>
+</div>
+
+<div id="lightbox" style="display:none" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
 </div>
 
 <div id="error-toast"></div>

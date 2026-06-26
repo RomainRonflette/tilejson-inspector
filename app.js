@@ -600,8 +600,15 @@ function openHelp() {
 function closeHelp() {
   document.getElementById('help-modal').style.display = 'none';
 }
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').style.display = 'flex';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').style.display = 'none';
+}
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeHelp();
+  if (e.key === 'Escape') { closeLightbox(); closeHelp(); }
 });
 
 // ── Geocoder ──
