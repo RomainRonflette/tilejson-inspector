@@ -184,6 +184,15 @@ function renderApp() {
   document.getElementById('main').classList.add('visible');
 
   document.getElementById('header-name').textContent = tilejson.name || 'tilejson-inspector';
+
+  const sourceLink = document.getElementById('header-source-link');
+  if (currentSource?.type === 'url') {
+    sourceLink.href = currentSource.href;
+    sourceLink.style.display = 'flex';
+  } else {
+    sourceLink.style.display = 'none';
+  }
+
   document.getElementById('header-zoom').textContent = `${tilejson.minzoom ?? '?'}–${tilejson.maxzoom ?? '?'}`;
   document.getElementById('header-layers-text').textContent =
     t('header.layers', { n: allLayers.length, s: allLayers.length !== 1 ? 's' : '' });
