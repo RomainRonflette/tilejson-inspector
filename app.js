@@ -497,7 +497,7 @@ function initMap() {
       return true;
     });
 
-    const popup = new maplibregl.Popup({ maxWidth: '280px' }).setLngLat(e.lngLat);
+    const popup = new maplibregl.Popup({ maxWidth: '380px' }).setLngLat(e.lngLat);
 
     function buildPopupDOM(feat) {
       const sourceLayer = feat.layer['source-layer'];
@@ -541,7 +541,7 @@ function initMap() {
         entries.forEach(([k, v]) => {
           const tr = document.createElement('tr');
           if (k === selectedField) tr.className = 'filtered';
-          const td1 = document.createElement('td'); td1.textContent = k;
+          const td1 = document.createElement('td'); td1.textContent = k; td1.title = k;
           const td2 = document.createElement('td'); td2.textContent = String(v);
           tr.appendChild(td1); tr.appendChild(td2);
           table.appendChild(tr);
