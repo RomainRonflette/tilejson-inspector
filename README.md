@@ -4,7 +4,9 @@ A TileJSON file inspection tool for exploring vector layers and their attributes
 
 ![Drop zone](img/screenshot_home.webp)
 
-![Inspector](img/screenshot_inspector.webp)
+![Inspector](img/screenshot_inspector_01.webp)
+
+![Inspector](img/screenshot_inspector_02.webp)
 
 ## Use the inspector
 [👉 inspect tileJSON and vector map](https://romainronflette.github.io/tilejson-inspector/)
