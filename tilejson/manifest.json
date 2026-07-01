@@ -2,18 +2,18 @@
   {
     "provider": "IGN",
     "items": [
-      { "name": "BD TOPO®", "url": "https://data.geopf.fr/tms/1.0.0/BDTOPO/metadata.json"},
-      { "name": "Plan IGN", "file": "metadata_plan_ign.json" }
+      { "name": "BD TOPO®", "url": "https://data.geopf.fr/tms/1.0.0/BDTOPO/metadata.json", "center": [2.35, 46.5], "zoom": 5 },
+      { "name": "Plan IGN", "file": "metadata_plan_ign.json", "center": [2.35, 46.5], "zoom": 5 }
     ]
   },
   {
     "provider": "data.gouv.fr",
     "items": [
-      { "name": "Cadastre", "url": "https://openmaptiles.data.gouv.fr/data/cadastre.json" },
-      { "name": "Découpages administratifs", "url": "https://openmaptiles.data.gouv.fr/data/decoupage-administratif.json" },
-      { "name": "Cadastre DVF", "url": "https://openmaptiles.data.gouv.fr/data/cadastre-dvf.json" },
-      { "name": "Planet Vector", "url": "https://openmaptiles.data.gouv.fr/data/planet-vector.json" },
-      { "name": "France Vector", "url": "https://openmaptiles.data.gouv.fr/data/france-vector.json" }
+      { "name": "Cadastre", "url": "https://openmaptiles.data.gouv.fr/data/cadastre.json", "center": [2.35, 46.5], "zoom": 14 },
+      { "name": "Découpages administratifs", "url": "https://openmaptiles.data.gouv.fr/data/decoupage-administratif.json", "center": [2.35, 46.5], "zoom": 5 },
+      { "name": "Cadastre DVF", "url": "https://openmaptiles.data.gouv.fr/data/cadastre-dvf.json", "center": [2.35, 46.5], "zoom": 14 },
+      { "name": "Planet Vector", "url": "https://openmaptiles.data.gouv.fr/data/planet-vector.json", "center": [0, 20], "zoom": 2 },
+      { "name": "France Vector", "url": "https://openmaptiles.data.gouv.fr/data/france-vector.json", "center": [2.35, 46.5], "zoom": 5 }
     ]
   }
 ]

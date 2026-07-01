@@ -96,7 +96,7 @@ function assignLayerColor(index) {
       const btns = document.createElement('div');
       btns.className = 'schema-btns';
 
-      items.forEach(({ name, file, url }) => {
+      items.forEach(({ name, file, url, center, zoom }) => {
         const btn = document.createElement('button');
         btn.className = 'btn';
         btn.textContent = name;
@@ -106,6 +106,8 @@ function assignLayerColor(index) {
             const r = await fetch(href);
             if (!r.ok) throw new Error(`HTTP ${r.status}`);
             currentSource = url ? { type: 'url', href: url } : { type: 'file', name: file };
+            if (center) currentSource.center = center;
+            if (zoom != null) currentSource.zoom = zoom;
             loadData(await r.json());
           } catch (err) {
             showError(t('error.loadItem', { name, msg: err.message }));
@@ -182,9 +184,6 @@ function renderApp() {
   document.getElementById('main').classList.add('visible');
 
   document.getElementById('header-name').textContent = tilejson.name || 'tilejson-inspector';
-  const descEl = document.getElementById('header-desc');
-  descEl.textContent = tilejson.description || '';
-  descEl.style.display = tilejson.description ? '' : 'none';
   document.getElementById('header-zoom').textContent = `${tilejson.minzoom ?? '?'}–${tilejson.maxzoom ?? '?'}`;
   document.getElementById('header-layers-text').textContent =
     t('header.layers', { n: allLayers.length, s: allLayers.length !== 1 ? 's' : '' });
@@ -418,6 +417,9 @@ function clearValueFilter() {
 
 // ── Map initialization ──
 function initMap() {
+  if (map) { map.remove(); map = null; }
+  document.getElementById('map-container').innerHTML = MAP_CONTAINER_INITIAL_HTML;
+
   const hasTiles = tilejson.tiles && tilejson.tiles.length > 0;
 
   if (!hasTiles) {
@@ -439,6 +441,9 @@ function initMap() {
   if (_pendingRestore && _pendingRestore.z !== null) {
     opts.center = [_pendingRestore.lng, _pendingRestore.lat];
     opts.zoom = _pendingRestore.z;
+  } else if (currentSource?.center) {
+    opts.center = currentSource.center;
+    opts.zoom = currentSource.zoom ?? tilejson.minzoom ?? 5;
   } else if (center && center.length >= 2) {
     opts.center = [center[0], center[1]];
     opts.zoom = center[2] ?? tilejson.minzoom ?? 5;
