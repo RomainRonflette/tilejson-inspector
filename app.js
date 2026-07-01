@@ -230,7 +230,6 @@ function selectLayer(layerId) {
   if (selectedField !== null) {
     selectedField = null;
     selectedValueJson = null;
-    document.getElementById('map-filter-chip').style.display = 'none';
   }
 
   selectedLayerId = layerId;
@@ -246,6 +245,7 @@ function selectLayer(layerId) {
     highlightSelectedLayer(layerId);
     checkZoomAlert();
   }
+  updateBreadcrumb();
   writeHash();
 }
 
@@ -268,14 +268,26 @@ function checkZoomAlert() {
 
   const currentZoom = map.getZoom();
   const minz = layer.minzoom ?? 0;
-  const sourcMaxz = tilejson.maxzoom ?? 22;
+  const maxz = layer.maxzoom ?? tilejson.maxzoom ?? 22;
+  const schemaMaxz = tilejson.maxzoom ?? 22;
 
   if (currentZoom < minz) {
     document.getElementById('map-zoom-alert-text').textContent =
-      t('zoom.alert', { min: minz, max: sourcMaxz, current: currentZoom.toFixed(1) });
+      t('zoom.alert', { min: minz, max: schemaMaxz, current: currentZoom.toFixed(1) });
     const btn = document.getElementById('map-zoom-alert-btn');
     btn.textContent = t('zoom.in', { target: minz });
     btn.onclick = () => map.easeTo({ zoom: minz });
+    zoomEl.style.display = 'flex';
+    if (boundsEl) boundsEl.style.display = 'none';
+    return;
+  }
+
+  if (maxz < schemaMaxz && Math.floor(currentZoom) > maxz) {
+    document.getElementById('map-zoom-alert-text').textContent =
+      t('zoom.alert', { min: minz, max: maxz, current: currentZoom.toFixed(1) });
+    const btn = document.getElementById('map-zoom-alert-btn');
+    btn.textContent = t('zoom.out', { target: maxz });
+    btn.onclick = () => map.easeTo({ zoom: maxz });
     zoomEl.style.display = 'flex';
     if (boundsEl) boundsEl.style.display = 'none';
     return;
@@ -410,21 +422,129 @@ function selectValue(field, rawValue, rawJson) {
   document.querySelectorAll(`.value-tag[data-field="${CSS.escape(field)}"]`)
     .forEach(el => { if (el.dataset.raw === rawJson) el.classList.add('selected'); });
 
-  const displayVal = typeof rawValue === 'string' ? `"${rawValue}"` : String(rawValue);
-  document.getElementById('map-filter-text').textContent = `${field} = ${displayVal}`;
-  document.getElementById('map-filter-chip').style.display = 'flex';
-
   if (map && selectedLayerId) applyMapValueFilter(selectedLayerId, field, rawValue);
+  updateBreadcrumb();
   writeHash();
 }
+
+function scrollToField(key) {
+  const grid = document.getElementById('fields-grid');
+  if (!grid) return;
+  for (const card of grid.querySelectorAll('.field-card')) {
+    const nameEl = card.querySelector('.field-name');
+    if (nameEl && nameEl.textContent === key) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      break;
+    }
+  }
+}
+
 
 function clearValueFilter() {
   selectedField = null;
   selectedValueJson = null;
   document.querySelectorAll('.value-tag').forEach(el => el.classList.remove('selected'));
-  document.getElementById('map-filter-chip').style.display = 'none';
   if (map && selectedLayerId) highlightSelectedLayer(selectedLayerId);
+  updateBreadcrumb();
   writeHash();
+}
+
+function deselectLayer() {
+  selectedField = null;
+  selectedValueJson = null;
+  selectedLayerId = null;
+  document.querySelectorAll('.layer-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.value-tag').forEach(el => el.classList.remove('selected'));
+  document.getElementById('detail-empty').style.display = 'flex';
+  document.getElementById('detail-content').style.display = 'none';
+  if (map) { resetLayerHighlights(); checkZoomAlert(); }
+  updateBreadcrumb();
+  writeHash();
+}
+
+function resetLayerHighlights() {
+  if (!map) return;
+  allLayers.forEach(layer => {
+    const { isPolygon, isLine, isPoint } = geomFlags(layer);
+    const color = layerColors[layer.id];
+    if (isPolygon) {
+      sp(layer.id + '--fill', 'fill-color', color);
+      sp(layer.id + '--fill', 'fill-opacity', 0.3);
+      sp(layer.id + '--outline', 'line-color', color);
+      sp(layer.id + '--outline', 'line-opacity', 0.7);
+      sp(layer.id + '--outline', 'line-width', 1);
+    }
+    if (isLine) {
+      sp(layer.id + '--line', 'line-color', color);
+      sp(layer.id + '--line', 'line-opacity', 0.75);
+      sp(layer.id + '--line', 'line-width', 1.5);
+    }
+    if (isPoint) {
+      sp(layer.id + '--circle', 'circle-color', color);
+      sp(layer.id + '--circle', 'circle-opacity', 0.85);
+      sp(layer.id + '--circle', 'circle-radius', 4);
+    }
+  });
+}
+
+function updateBreadcrumb() {
+  const el = document.getElementById('map-breadcrumb');
+  if (!el || !map) return;
+
+  el.innerHTML = '';
+  el.style.display = 'flex';
+
+  // Zoom segment
+  const zoomEl = document.createElement('span');
+  zoomEl.className = 'bc-zoom';
+  zoomEl.appendChild(document.createTextNode('z '));
+  const zoomVal = document.createElement('span');
+  zoomVal.id = 'map-zoom-value';
+  zoomVal.textContent = map.getZoom().toFixed(1);
+  zoomEl.appendChild(zoomVal);
+  el.appendChild(zoomEl);
+
+  const zoomSep = document.createElement('span');
+  zoomSep.className = 'bc-zoom-sep';
+  zoomSep.textContent = '|';
+  el.appendChild(zoomSep);
+
+  const allEl = document.createElement('span');
+  allEl.className = 'bc-layer ' + (!selectedLayerId ? 'current' : 'clickable');
+  allEl.textContent = t('breadcrumb.all');
+  if (selectedLayerId) allEl.addEventListener('click', deselectLayer);
+  el.appendChild(allEl);
+
+  if (selectedLayerId) {
+    const sep0 = document.createElement('span');
+    sep0.className = 'bc-sep';
+    sep0.textContent = '›';
+    el.appendChild(sep0);
+
+    const layerEl = document.createElement('span');
+    layerEl.className = 'bc-layer ' + (selectedField !== null ? 'clickable' : 'current');
+    layerEl.textContent = selectedLayerId;
+    if (selectedField !== null) layerEl.addEventListener('click', clearValueFilter);
+    el.appendChild(layerEl);
+
+    if (selectedField !== null) {
+      const sep1 = document.createElement('span');
+      sep1.className = 'bc-sep';
+      sep1.textContent = '›';
+      el.appendChild(sep1);
+
+      let displayVal;
+      try {
+        const parsed = JSON.parse(selectedValueJson);
+        displayVal = typeof parsed === 'string' ? `"${parsed}"` : String(parsed);
+      } catch { displayVal = selectedValueJson; }
+
+      const filterEl = document.createElement('span');
+      filterEl.className = 'bc-filter';
+      filterEl.textContent = `${selectedField} = ${displayVal}`;
+      el.appendChild(filterEl);
+    }
+  }
 }
 
 // ── Map initialization ──
@@ -473,14 +593,15 @@ function initMap() {
   map.on('moveend', scheduleHashWrite);
 
   function updateZoomIndicator() {
-    document.getElementById('map-zoom-value').textContent = map.getZoom().toFixed(1);
-    document.getElementById('map-zoom-indicator').style.display = 'block';
+    const el = document.getElementById('map-zoom-value');
+    if (el) el.textContent = map.getZoom().toFixed(1);
   }
 
   map.on('zoom', () => { updateZoomIndicator(); checkZoomAlert(); });
   map.on('idle', checkZoomAlert);
 
   map.on('load', () => {
+    updateBreadcrumb();
     updateZoomIndicator();
     getAllMapLayerIds().forEach(id => {
       map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; });
@@ -553,17 +674,45 @@ function initMap() {
         empty.textContent = t('popup.noAttrib');
         container.appendChild(empty);
       } else {
-        const table = document.createElement('table');
-        table.className = 'popup-table';
+        const attrsDiv = document.createElement('div');
+        attrsDiv.className = 'popup-attrs';
+
         entries.forEach(([k, v]) => {
-          const tr = document.createElement('tr');
-          if (k === selectedField) tr.className = 'filtered';
-          const td1 = document.createElement('td'); td1.textContent = k; td1.title = k;
-          const td2 = document.createElement('td'); td2.textContent = String(v);
-          tr.appendChild(td1); tr.appendChild(td2);
-          table.appendChild(tr);
+          const rawJson = JSON.stringify(v);
+          const row = document.createElement('div');
+          row.className = 'popup-attr';
+
+          const keyEl = document.createElement('span');
+          keyEl.className = 'popup-attr-key';
+          keyEl.textContent = k;
+          keyEl.title = k;
+
+          const tag = document.createElement('span');
+          tag.className = 'value-tag';
+          if (k === selectedField && rawJson === selectedValueJson) tag.classList.add('selected');
+          tag.textContent = String(v);
+          tag.title = t('value.filterTitle');
+          tag.addEventListener('click', () => {
+            const wasSelected = selectedField === k && selectedValueJson === rawJson;
+            selectValue(k, v, rawJson);
+            attrsDiv.querySelectorAll('.value-tag').forEach(t => t.classList.remove('selected'));
+            if (!wasSelected) {
+              tag.classList.add('selected');
+              scrollToField(k);
+            }
+          });
+
+          row.appendChild(keyEl);
+          row.appendChild(tag);
+          attrsDiv.appendChild(row);
         });
-        container.appendChild(table);
+
+        container.appendChild(attrsDiv);
+
+        title.addEventListener('click', () => {
+          clearValueFilter();
+          attrsDiv.querySelectorAll('.value-tag.selected').forEach(t => t.classList.remove('selected'));
+        });
       }
 
       return container;

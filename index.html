@@ -115,7 +115,7 @@
       <input id="geocoder-input" type="text" data-i18n-placeholder="geocoder.placeholder" placeholder="Rechercher un lieu…" autocomplete="off">
       <ul id="geocoder-results"></ul>
     </div>
-    <div id="map-zoom-indicator">z&#8201;<span id="map-zoom-value"></span></div>
+
     <div id="map-zoom-alert">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -130,13 +130,7 @@
       </svg>
       <span id="map-bounds-alert-text"></span>
     </div>
-    <div id="map-filter-chip">
-      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-      </svg>
-      <span id="map-filter-text"></span>
-      <button onclick="clearValueFilter()" data-i18n-title="filter.remove" title="Remove filter">×</button>
-    </div>
+    <div id="map-breadcrumb" style="display:none"></div>
   </div>
 
 </div>
