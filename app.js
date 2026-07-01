@@ -300,9 +300,12 @@ function checkZoomAlert() {
 // ── Detail panel ──
 const TYPE_COLORS = {
   text: '#3ecf8e',
+  string: '#3ecf8e',
   'character varying': '#3ecf8e',
   integer: '#f59e0b',
+  number: '#f59e0b',
   'double precision': '#f59e0b',
+  float: '#f59e0b',
   boolean: '#a78bfa',
 };
 
@@ -341,7 +344,8 @@ function showDetail(layer) {
   }
 
   fieldKeys.forEach(key => {
-    const f = fields[key];
+    const raw = fields[key];
+    const f = typeof raw === 'string' ? { type: raw } : (raw || {});
     const values = f.values || [];
     const countStr = f.count != null
       ? t('entities.count', {

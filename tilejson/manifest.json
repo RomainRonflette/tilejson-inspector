@@ -7,6 +7,12 @@
     ]
   },
   {
+    "provider": "VersaTiles",
+    "items": [
+      { "name": "OSM Shortbread 1.0", "description": "Schéma Shortbread, depuis les tuiles servies par tiles.versatiles.org", "file": "shortbread_versatiles.json", "center": [2.35, 46.5], "zoom": 5 }
+    ]
+  },
+  {
     "provider": "data.gouv.fr",
     "items": [
       { "name": "Cadastre", "description": "Parcelles cadastrales en France", "url": "https://openmaptiles.data.gouv.fr/data/cadastre.json", "center": [2.35, 46.5], "zoom": 14 },
