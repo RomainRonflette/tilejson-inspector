@@ -54,8 +54,8 @@ const TRANSLATIONS = {
     'help.s5.body': 'Use the search bar at the top-left of the map to navigate to any place in the world.',
     'help.s6.title': 'Zoom guidance',
     'help.s6.body': 'A warning appears when the current zoom is outside a layer\'s visible range, with a button to quickly zoom in or out to that layer.',
-    'help.caption.home': 'Drop zone — load a file, URL, or pre-built schema',
-    'help.caption.inspector': 'Inspector — layers, attributes and interactive map',
+    'help.caption.home': 'Load a file, URL, or pre-built schema',
+    'help.caption.inspector': 'Inspect layers, attributes and use interactive map',
   },
   fr: {
     'drop.tagline': 'Explorez les schémas de tuiles vectorielles (couches, attributs et carte interactive). Chargez votre propre TileJSON ou choisissez parmi les schémas disponibles.',
@@ -112,8 +112,8 @@ const TRANSLATIONS = {
     'help.s5.body': 'Utilisez la barre de recherche en haut à gauche de la carte pour naviguer vers n\'importe quel endroit du monde.',
     'help.s6.title': 'Alertes de zoom',
     'help.s6.body': 'Un avertissement s\'affiche quand le zoom actuel est hors de la plage visible d\'une couche, avec un bouton pour ajuster rapidement le zoom.',
-    'help.caption.home': 'Zone de dépôt — chargez un fichier, une URL ou un schéma',
-    'help.caption.inspector': 'Inspecteur — couches, attributs et carte interactive',
+    'help.caption.home': 'Chargez un fichier, une URL ou un schéma',
+    'help.caption.inspector': 'Inspectez les couches, attributs et utilisez la carte interactive',
   }
 };
 
