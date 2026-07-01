@@ -113,7 +113,8 @@ header .meta { display: flex; gap: 12px; margin-left: auto; align-items: center;
   border-right: 1px solid var(--border);
   background: var(--surface); overflow: hidden;
 }
-.sidebar-header { padding: 12px 14px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.sidebar-title { padding: 14px 14px 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dim); flex-shrink: 0; }
+.sidebar-header { padding: 0 14px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .sidebar-header .search-wrap { position: relative; }
 .sidebar-header input {
   width: 100%; padding: 7px 10px 7px 32px; border-radius: 8px;
@@ -326,6 +327,21 @@ header .meta { display: flex; gap: 12px; margin-left: auto; align-items: center;
 .popup-table td:last-child { word-break: break-all; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; }
 .popup-table tr.filtered td:first-child { color: var(--accent); }
 .popup-empty { color: var(--text-dim); font-style: italic; }
+.popup-picker {
+  display: flex; flex-wrap: wrap; gap: 4px;
+  margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.popup-picker-title {
+  width: 100%; font-size: 10px; font-weight: 600; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px;
+}
+.popup-picker-btn {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 4px;
+  color: var(--text-dim); font-size: 10px; font-family: 'SF Mono', 'Fira Code', monospace;
+  padding: 2px 7px; cursor: pointer; white-space: nowrap;
+}
+.popup-picker-btn:hover { border-color: var(--accent); color: var(--text); }
+.popup-picker-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 .maplibregl-ctrl-group { background: var(--surface) !important; border: 1px solid var(--border) !important; }
 .maplibregl-ctrl-group button { background-color: var(--surface) !important; color: var(--text) !important; }
 .maplibregl-ctrl-group button:hover { background-color: var(--surface2) !important; }

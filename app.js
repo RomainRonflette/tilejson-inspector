@@ -488,28 +488,73 @@ function initMap() {
     const features = map.queryRenderedFeatures(e.point, { layers: getAllMapLayerIds() });
     if (!features.length) return;
 
-    const feat = features[0];
-    const sourceLayer = feat.layer['source-layer'];
-    const props = feat.properties || {};
+    // One feature per source-layer (topmost wins)
+    const seen = new Set();
+    const unique = features.filter(f => {
+      const sl = f.layer['source-layer'];
+      if (seen.has(sl)) return false;
+      seen.add(sl);
+      return true;
+    });
 
-    if (sourceLayer !== selectedLayerId) selectLayer(sourceLayer);
+    const popup = new maplibregl.Popup({ maxWidth: '280px' }).setLngLat(e.lngLat);
 
-    const entries = Object.entries(props);
-    let html = `<div class="popup-layer-name">${esc(sourceLayer)}</div>`;
-    if (entries.length === 0) {
-      html += `<span class="popup-empty">${t('popup.noAttrib')}</span>`;
-    } else {
-      html += '<table class="popup-table">';
-      entries.forEach(([k, v]) => {
-        html += `<tr${k === selectedField ? ' class="filtered"' : ''}><td>${esc(k)}</td><td>${esc(String(v))}</td></tr>`;
-      });
-      html += '</table>';
+    function buildPopupDOM(feat) {
+      const sourceLayer = feat.layer['source-layer'];
+      const entries = Object.entries(feat.properties || {});
+      const container = document.createElement('div');
+
+      if (unique.length > 1) {
+        const picker = document.createElement('div');
+        picker.className = 'popup-picker';
+        const pickerTitle = document.createElement('div');
+        pickerTitle.className = 'popup-picker-title';
+        pickerTitle.textContent = t('popup.layers', { n: unique.length });
+        picker.appendChild(pickerTitle);
+        unique.forEach(f => {
+          const sl = f.layer['source-layer'];
+          const btn = document.createElement('button');
+          btn.className = 'popup-picker-btn' + (sl === sourceLayer ? ' active' : '');
+          btn.textContent = sl;
+          btn.addEventListener('click', () => {
+            if (sl !== selectedLayerId) selectLayer(sl);
+            popup.setDOMContent(buildPopupDOM(f));
+          });
+          picker.appendChild(btn);
+        });
+        container.appendChild(picker);
+      }
+
+      const title = document.createElement('div');
+      title.className = 'popup-layer-name';
+      title.textContent = sourceLayer;
+      container.appendChild(title);
+
+      if (entries.length === 0) {
+        const empty = document.createElement('span');
+        empty.className = 'popup-empty';
+        empty.textContent = t('popup.noAttrib');
+        container.appendChild(empty);
+      } else {
+        const table = document.createElement('table');
+        table.className = 'popup-table';
+        entries.forEach(([k, v]) => {
+          const tr = document.createElement('tr');
+          if (k === selectedField) tr.className = 'filtered';
+          const td1 = document.createElement('td'); td1.textContent = k;
+          const td2 = document.createElement('td'); td2.textContent = String(v);
+          tr.appendChild(td1); tr.appendChild(td2);
+          table.appendChild(tr);
+        });
+        container.appendChild(table);
+      }
+
+      return container;
     }
 
-    new maplibregl.Popup({ maxWidth: '260px' })
-      .setLngLat(e.lngLat)
-      .setHTML(html)
-      .addTo(map);
+    const first = unique[0];
+    if (first.layer['source-layer'] !== selectedLayerId) selectLayer(first.layer['source-layer']);
+    popup.setDOMContent(buildPopupDOM(first)).addTo(map);
   });
 }
 
