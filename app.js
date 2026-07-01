@@ -8,6 +8,64 @@ let selectedValueJson = null;
 let map = null;
 const layerColors = {};
 
+// ── URL hash state ──
+let currentSource = null; // {type:'url', href:'...'} | {type:'file', name:'...'} | null
+let _pendingRestore = null;
+let _hashWriteTimer = null;
+
+function readHash() {
+  return Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
+}
+
+function writeHash() {
+  const params = new URLSearchParams();
+  if (currentSource) {
+    if (currentSource.type === 'url') params.set('url', currentSource.href);
+    else params.set('file', currentSource.name);
+  }
+  if (selectedLayerId) params.set('layer', selectedLayerId);
+  if (selectedField !== null) {
+    params.set('field', selectedField);
+    params.set('value', selectedValueJson);
+  }
+  if (map) {
+    const c = map.getCenter();
+    params.set('z', map.getZoom().toFixed(2));
+    params.set('lng', c.lng.toFixed(5));
+    params.set('lat', c.lat.toFixed(5));
+  }
+  history.replaceState(null, '', '#' + params.toString());
+}
+
+function scheduleHashWrite() {
+  clearTimeout(_hashWriteTimer);
+  _hashWriteTimer = setTimeout(writeHash, 400);
+}
+
+async function applyHash() {
+  const h = readHash();
+  if (!h.url && !h.file) return;
+  _pendingRestore = {
+    layer: h.layer || null,
+    field: h.field || null,
+    value: h.value !== undefined ? h.value : null,
+    z: h.z ? +h.z : null,
+    lng: h.lng ? +h.lng : null,
+    lat: h.lat ? +h.lat : null,
+  };
+  try {
+    const href = h.url || `./tilejson/${h.file}`;
+    currentSource = h.url ? { type: 'url', href: h.url } : { type: 'file', name: h.file };
+    const res = await fetch(href);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    loadData(await res.json());
+  } catch (err) {
+    _pendingRestore = null;
+    currentSource = null;
+    showError(t('error.loadUrl', { msg: err.message }));
+  }
+}
+
 // ── Color palette ──
 const HUE_PALETTE = [210, 150, 30, 280, 0, 180, 330, 90, 250, 60, 310, 120, 200, 45, 270, 160, 15, 240, 75, 350];
 function assignLayerColor(index) {
@@ -38,15 +96,18 @@ function assignLayerColor(index) {
       const btns = document.createElement('div');
       btns.className = 'schema-btns';
 
-      items.forEach(({ name, file, url }) => {
+      items.forEach(({ name, description, file, url, center, zoom }) => {
         const btn = document.createElement('button');
-        btn.className = 'btn';
-        btn.textContent = name;
+        btn.className = 'schema-item-btn';
+        btn.innerHTML = `<span class="schema-item-name">${esc(name)}</span>${description ? `<span class="schema-item-desc">${esc(description)}</span>` : ''}`;
         btn.addEventListener('click', async () => {
           try {
             const href = url ?? `./tilejson/${file}`;
             const r = await fetch(href);
             if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            currentSource = url ? { type: 'url', href: url } : { type: 'file', name: file };
+            if (center) currentSource.center = center;
+            if (zoom != null) currentSource.zoom = zoom;
             loadData(await r.json());
           } catch (err) {
             showError(t('error.loadItem', { name, msg: err.message }));
@@ -83,7 +144,10 @@ document.getElementById('url-input').addEventListener('keydown', e => {
 function readFile(file) {
   const reader = new FileReader();
   reader.onload = e => {
-    try { loadData(JSON.parse(e.target.result)); }
+    try {
+      currentSource = null;
+      loadData(JSON.parse(e.target.result));
+    }
     catch { showError(t('error.invalidJson')); }
   };
   reader.readAsText(file);
@@ -95,6 +159,7 @@ async function loadFromUrl() {
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    currentSource = { type: 'url', href: url };
     loadData(await res.json());
   } catch (err) {
     showError(t('error.loadUrl', { msg: err.message }));
@@ -110,6 +175,7 @@ function loadData(data) {
   allLayers = data.vector_layers || data.layers || [];
   allLayers.forEach((layer, i) => { layerColors[layer.id] = assignLayerColor(i); });
   renderApp();
+  writeHash();
 }
 
 function renderApp() {
@@ -118,9 +184,6 @@ function renderApp() {
   document.getElementById('main').classList.add('visible');
 
   document.getElementById('header-name').textContent = tilejson.name || 'tilejson-inspector';
-  const descEl = document.getElementById('header-desc');
-  descEl.textContent = tilejson.description || '';
-  descEl.style.display = tilejson.description ? '' : 'none';
   document.getElementById('header-zoom').textContent = `${tilejson.minzoom ?? '?'}–${tilejson.maxzoom ?? '?'}`;
   document.getElementById('header-layers-text').textContent =
     t('header.layers', { n: allLayers.length, s: allLayers.length !== 1 ? 's' : '' });
@@ -174,6 +237,7 @@ function selectLayer(layerId) {
     highlightSelectedLayer(layerId);
     checkZoomAlert();
   }
+  writeHash();
 }
 
 
@@ -339,6 +403,7 @@ function selectValue(field, rawValue, rawJson) {
   document.getElementById('map-filter-chip').style.display = 'flex';
 
   if (map && selectedLayerId) applyMapValueFilter(selectedLayerId, field, rawValue);
+  writeHash();
 }
 
 function clearValueFilter() {
@@ -347,10 +412,14 @@ function clearValueFilter() {
   document.querySelectorAll('.value-tag').forEach(el => el.classList.remove('selected'));
   document.getElementById('map-filter-chip').style.display = 'none';
   if (map && selectedLayerId) highlightSelectedLayer(selectedLayerId);
+  writeHash();
 }
 
 // ── Map initialization ──
 function initMap() {
+  if (map) { map.remove(); map = null; }
+  document.getElementById('map-container').innerHTML = MAP_CONTAINER_INITIAL_HTML;
+
   const hasTiles = tilejson.tiles && tilejson.tiles.length > 0;
 
   if (!hasTiles) {
@@ -369,7 +438,13 @@ function initMap() {
   const bounds = tilejson.bounds;
   const opts = { container: 'map', style: buildMapStyle(), attributionControl: true };
 
-  if (center && center.length >= 2) {
+  if (_pendingRestore && _pendingRestore.z !== null) {
+    opts.center = [_pendingRestore.lng, _pendingRestore.lat];
+    opts.zoom = _pendingRestore.z;
+  } else if (currentSource?.center) {
+    opts.center = currentSource.center;
+    opts.zoom = currentSource.zoom ?? tilejson.minzoom ?? 5;
+  } else if (center && center.length >= 2) {
     opts.center = [center[0], center[1]];
     opts.zoom = center[2] ?? tilejson.minzoom ?? 5;
   } else if (bounds) {
@@ -383,6 +458,7 @@ function initMap() {
   map = new maplibregl.Map(opts);
   map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
   map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
+  map.on('moveend', scheduleHashWrite);
 
   function updateZoomIndicator() {
     document.getElementById('map-zoom-value').textContent = map.getZoom().toFixed(1);
@@ -398,35 +474,92 @@ function initMap() {
       map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
     });
-    if (selectedLayerId) highlightSelectedLayer(selectedLayerId);
+    if (_pendingRestore?.layer) {
+      selectLayer(_pendingRestore.layer);
+      if (_pendingRestore.field && _pendingRestore.value !== null) {
+        try {
+          const rawValue = JSON.parse(_pendingRestore.value);
+          selectValue(_pendingRestore.field, rawValue, _pendingRestore.value);
+        } catch {}
+      }
+      _pendingRestore = null;
+    } else if (selectedLayerId) {
+      highlightSelectedLayer(selectedLayerId);
+    }
+    writeHash();
   });
 
   map.on('click', e => {
     const features = map.queryRenderedFeatures(e.point, { layers: getAllMapLayerIds() });
     if (!features.length) return;
 
-    const feat = features[0];
-    const sourceLayer = feat.layer['source-layer'];
-    const props = feat.properties || {};
+    // One feature per source-layer (topmost wins)
+    const seen = new Set();
+    const unique = features.filter(f => {
+      const sl = f.layer['source-layer'];
+      if (seen.has(sl)) return false;
+      seen.add(sl);
+      return true;
+    });
 
-    if (sourceLayer !== selectedLayerId) selectLayer(sourceLayer);
+    const popup = new maplibregl.Popup({ maxWidth: '380px' }).setLngLat(e.lngLat);
 
-    const entries = Object.entries(props);
-    let html = `<div class="popup-layer-name">${esc(sourceLayer)}</div>`;
-    if (entries.length === 0) {
-      html += `<span class="popup-empty">${t('popup.noAttrib')}</span>`;
-    } else {
-      html += '<table class="popup-table">';
-      entries.forEach(([k, v]) => {
-        html += `<tr${k === selectedField ? ' class="filtered"' : ''}><td>${esc(k)}</td><td>${esc(String(v))}</td></tr>`;
-      });
-      html += '</table>';
+    function buildPopupDOM(feat) {
+      const sourceLayer = feat.layer['source-layer'];
+      const entries = Object.entries(feat.properties || {});
+      const container = document.createElement('div');
+
+      if (unique.length > 1) {
+        const picker = document.createElement('div');
+        picker.className = 'popup-picker';
+        const pickerTitle = document.createElement('div');
+        pickerTitle.className = 'popup-picker-title';
+        pickerTitle.textContent = t('popup.layers', { n: unique.length });
+        picker.appendChild(pickerTitle);
+        unique.forEach(f => {
+          const sl = f.layer['source-layer'];
+          const btn = document.createElement('button');
+          btn.className = 'popup-picker-btn' + (sl === sourceLayer ? ' active' : '');
+          btn.textContent = sl;
+          btn.addEventListener('click', () => {
+            if (sl !== selectedLayerId) selectLayer(sl);
+            popup.setDOMContent(buildPopupDOM(f));
+          });
+          picker.appendChild(btn);
+        });
+        container.appendChild(picker);
+      }
+
+      const title = document.createElement('div');
+      title.className = 'popup-layer-name';
+      title.textContent = sourceLayer;
+      container.appendChild(title);
+
+      if (entries.length === 0) {
+        const empty = document.createElement('span');
+        empty.className = 'popup-empty';
+        empty.textContent = t('popup.noAttrib');
+        container.appendChild(empty);
+      } else {
+        const table = document.createElement('table');
+        table.className = 'popup-table';
+        entries.forEach(([k, v]) => {
+          const tr = document.createElement('tr');
+          if (k === selectedField) tr.className = 'filtered';
+          const td1 = document.createElement('td'); td1.textContent = k; td1.title = k;
+          const td2 = document.createElement('td'); td2.textContent = String(v);
+          tr.appendChild(td1); tr.appendChild(td2);
+          table.appendChild(tr);
+        });
+        container.appendChild(table);
+      }
+
+      return container;
     }
 
-    new maplibregl.Popup({ maxWidth: '260px' })
-      .setLngLat(e.lngLat)
-      .setHTML(html)
-      .addTo(map);
+    const first = unique[0];
+    if (first.layer['source-layer'] !== selectedLayerId) selectLayer(first.layer['source-layer']);
+    popup.setDOMContent(buildPopupDOM(first)).addTo(map);
   });
 }
 
@@ -561,7 +694,9 @@ function sp(id, prop, value) {
 function reset() {
   tilejson = null; allLayers = []; selectedLayerId = null;
   selectedField = null; selectedValueJson = null;
+  currentSource = null;
   Object.keys(layerColors).forEach(k => delete layerColors[k]);
+  history.replaceState(null, '', location.pathname + location.search);
 
   if (map) { map.remove(); map = null; }
 
@@ -611,8 +746,21 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeLightbox(); closeHelp(); }
 });
 
-// ── Geocoder ──
+applyHash();
+
+// ── Geocoder (Photon / komoot) ──
 let geocoderAbort = null;
+
+function photonLabel(props) {
+  const parts = [];
+  const main = props.name || (props.housenumber && props.street ? `${props.housenumber} ${props.street}` : props.street);
+  if (main) parts.push(main);
+  if (props.city && props.city !== main) parts.push(props.city);
+  else if (props.county && props.county !== main) parts.push(props.county);
+  if (props.state) parts.push(props.state);
+  if (props.country) parts.push(props.country);
+  return parts.join(', ');
+}
 
 function bindGeocoder() {
   if (geocoderAbort) geocoderAbort.abort();
@@ -629,13 +777,14 @@ function bindGeocoder() {
 
   function navigate(s) {
     if (!map) return;
-    const bb = s.boundingbox;
-    if (bb) {
-      map.fitBounds([[+bb[2], +bb[0]], [+bb[3], +bb[1]]], { padding: 50, duration: 0 });
+    const [lon, lat] = s.geometry.coordinates;
+    const extent = s.properties.extent; // [minLon, maxLat, maxLon, minLat]
+    if (extent) {
+      map.fitBounds([[extent[0], extent[3]], [extent[2], extent[1]]], { padding: 50, duration: 0 });
     } else {
-      map.jumpTo({ center: [+s.lon, +s.lat] });
+      map.jumpTo({ center: [lon, lat] });
     }
-    input.value = s.display_name.split(',')[0].trim();
+    input.value = (s.properties.name || photonLabel(s.properties)).split(',')[0].trim();
     close();
   }
 
@@ -656,7 +805,7 @@ function bindGeocoder() {
     if (!suggestions.length) { list.classList.remove('open'); return; }
     suggestions.forEach(s => {
       const li = document.createElement('li');
-      li.textContent = s.display_name;
+      li.textContent = photonLabel(s.properties);
       li.addEventListener('mousedown', e => { e.preventDefault(); navigate(s); });
       list.appendChild(li);
     });
@@ -670,8 +819,10 @@ function bindGeocoder() {
     if (q.length < 2) { close(); return; }
     debounce = setTimeout(async () => {
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5`, { signal, headers: { 'User-Agent': 'tilejson-inspector/1.0' } });
-        suggestions = await res.json();
+        const lang = currentLang === 'fr' ? 'fr' : 'en';
+        const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5&lang=${lang}`, { signal });
+        const data = await res.json();
+        suggestions = data.features || [];
         render();
       } catch { /* aborted or network error */ }
     }, 300);
