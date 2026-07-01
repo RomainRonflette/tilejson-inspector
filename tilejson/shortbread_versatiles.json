@@ -24,7 +24,7 @@
     {
       "id": "addresses",
       "minzoom": 14,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "block": "String",
         "housename": "String",
@@ -36,7 +36,7 @@
     {
       "id": "aerialways",
       "minzoom": 12,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",
@@ -58,7 +58,7 @@
     {
       "id": "boundaries",
       "minzoom": 0,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "admin_level": {
           "type": "Number",
@@ -87,7 +87,7 @@
     {
       "id": "boundary_labels",
       "minzoom": 2,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "admin_level": {
           "type": "Number",
@@ -141,7 +141,7 @@
     {
       "id": "bridges",
       "minzoom": 12,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",
@@ -191,7 +191,7 @@
     {
       "id": "buildings",
       "minzoom": 14,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "dummy": "Number",
         "height": "Number",
@@ -203,7 +203,7 @@
     {
       "id": "dam_lines",
       "minzoom": 12,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",
@@ -217,7 +217,7 @@
     {
       "id": "dam_polygons",
       "minzoom": 12,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",
@@ -231,7 +231,7 @@
     {
       "id": "ferries",
       "minzoom": 10,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",
@@ -281,7 +281,7 @@
     {
       "id": "land",
       "minzoom": 0,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",
@@ -336,14 +336,14 @@
     {
       "id": "ocean",
       "minzoom": 0,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {},
       "geometry": "Polygon"
     },
     {
       "id": "pier_lines",
       "minzoom": 12,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",
@@ -359,7 +359,7 @@
     {
       "id": "pier_polygons",
       "minzoom": 12,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",
@@ -375,7 +375,7 @@
     {
       "id": "place_labels",
       "minzoom": 4,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",
@@ -440,7 +440,7 @@
     {
       "id": "pois",
       "minzoom": 14,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "amenity": {
           "type": "String",
@@ -706,7 +706,7 @@
     {
       "id": "public_transport",
       "minzoom": 11,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "iata": {
           "type": "String"
@@ -767,7 +767,7 @@
     {
       "id": "sites",
       "minzoom": 14,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",
@@ -790,7 +790,7 @@
     {
       "id": "street_labels",
       "minzoom": 10,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",
@@ -882,7 +882,7 @@
     {
       "id": "street_labels_points",
       "minzoom": 12,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",
@@ -935,7 +935,7 @@
     {
       "id": "street_polygons",
       "minzoom": 11,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "bridge": {
           "type": "Boolean"
@@ -967,7 +967,7 @@
     {
       "id": "streets",
       "minzoom": 5,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "bicycle": {
           "type": "String"
@@ -1039,7 +1039,7 @@
     {
       "id": "streets_polygons_labels",
       "minzoom": 14,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",
@@ -1092,7 +1092,7 @@
     {
       "id": "water_lines",
       "minzoom": 9,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "bridge": {
           "type": "Boolean"
@@ -1115,7 +1115,7 @@
     {
       "id": "water_lines_labels",
       "minzoom": 12,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "bridge": {
           "type": "Boolean"
@@ -1174,7 +1174,7 @@
     {
       "id": "water_polygons",
       "minzoom": 0,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",
@@ -1197,7 +1197,7 @@
     {
       "id": "water_polygons_labels",
       "minzoom": 4,
-      "maxzoom": 22,
+      "maxzoom": 14,
       "fields": {
         "kind": {
           "type": "String",

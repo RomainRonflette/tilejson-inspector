@@ -268,15 +268,14 @@ function checkZoomAlert() {
 
   const currentZoom = map.getZoom();
   const minz = layer.minzoom ?? 0;
-  const maxz = layer.maxzoom ?? 22;
+  const sourcMaxz = tilejson.maxzoom ?? 22;
 
-  if (currentZoom < minz || currentZoom > maxz) {
-    const targetZoom = currentZoom < minz ? minz : maxz;
+  if (currentZoom < minz) {
     document.getElementById('map-zoom-alert-text').textContent =
-      t('zoom.alert', { min: minz, max: maxz, current: currentZoom.toFixed(1) });
+      t('zoom.alert', { min: minz, max: sourcMaxz, current: currentZoom.toFixed(1) });
     const btn = document.getElementById('map-zoom-alert-btn');
-    btn.textContent = t(currentZoom < minz ? 'zoom.in' : 'zoom.out', { target: targetZoom });
-    btn.onclick = () => map.easeTo({ zoom: targetZoom });
+    btn.textContent = t('zoom.in', { target: minz });
+    btn.onclick = () => map.easeTo({ zoom: minz });
     zoomEl.style.display = 'flex';
     if (boundsEl) boundsEl.style.display = 'none';
     return;
