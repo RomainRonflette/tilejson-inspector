@@ -2,6 +2,7 @@
   {
     "provider": "IGN",
     "items": [
+      { "name": "BD TOPO®", "url": "https://data.geopf.fr/tms/1.0.0/BDTOPO/metadata.json"},
       { "name": "Plan IGN", "file": "metadata_plan_ign.json" }
     ]
   },
