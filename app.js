@@ -8,6 +8,64 @@ let selectedValueJson = null;
 let map = null;
 const layerColors = {};
 
+// ── URL hash state ──
+let currentSource = null; // {type:'url', href:'...'} | {type:'file', name:'...'} | null
+let _pendingRestore = null;
+let _hashWriteTimer = null;
+
+function readHash() {
+  return Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
+}
+
+function writeHash() {
+  const params = new URLSearchParams();
+  if (currentSource) {
+    if (currentSource.type === 'url') params.set('url', currentSource.href);
+    else params.set('file', currentSource.name);
+  }
+  if (selectedLayerId) params.set('layer', selectedLayerId);
+  if (selectedField !== null) {
+    params.set('field', selectedField);
+    params.set('value', selectedValueJson);
+  }
+  if (map) {
+    const c = map.getCenter();
+    params.set('z', map.getZoom().toFixed(2));
+    params.set('lng', c.lng.toFixed(5));
+    params.set('lat', c.lat.toFixed(5));
+  }
+  history.replaceState(null, '', '#' + params.toString());
+}
+
+function scheduleHashWrite() {
+  clearTimeout(_hashWriteTimer);
+  _hashWriteTimer = setTimeout(writeHash, 400);
+}
+
+async function applyHash() {
+  const h = readHash();
+  if (!h.url && !h.file) return;
+  _pendingRestore = {
+    layer: h.layer || null,
+    field: h.field || null,
+    value: h.value !== undefined ? h.value : null,
+    z: h.z ? +h.z : null,
+    lng: h.lng ? +h.lng : null,
+    lat: h.lat ? +h.lat : null,
+  };
+  try {
+    const href = h.url || `./tilejson/${h.file}`;
+    currentSource = h.url ? { type: 'url', href: h.url } : { type: 'file', name: h.file };
+    const res = await fetch(href);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    loadData(await res.json());
+  } catch (err) {
+    _pendingRestore = null;
+    currentSource = null;
+    showError(t('error.loadUrl', { msg: err.message }));
+  }
+}
+
 // ── Color palette ──
 const HUE_PALETTE = [210, 150, 30, 280, 0, 180, 330, 90, 250, 60, 310, 120, 200, 45, 270, 160, 15, 240, 75, 350];
 function assignLayerColor(index) {
@@ -47,6 +105,7 @@ function assignLayerColor(index) {
             const href = url ?? `./tilejson/${file}`;
             const r = await fetch(href);
             if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            currentSource = url ? { type: 'url', href: url } : { type: 'file', name: file };
             loadData(await r.json());
           } catch (err) {
             showError(t('error.loadItem', { name, msg: err.message }));
@@ -83,7 +142,10 @@ document.getElementById('url-input').addEventListener('keydown', e => {
 function readFile(file) {
   const reader = new FileReader();
   reader.onload = e => {
-    try { loadData(JSON.parse(e.target.result)); }
+    try {
+      currentSource = null;
+      loadData(JSON.parse(e.target.result));
+    }
     catch { showError(t('error.invalidJson')); }
   };
   reader.readAsText(file);
@@ -95,6 +157,7 @@ async function loadFromUrl() {
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    currentSource = { type: 'url', href: url };
     loadData(await res.json());
   } catch (err) {
     showError(t('error.loadUrl', { msg: err.message }));
@@ -110,6 +173,7 @@ function loadData(data) {
   allLayers = data.vector_layers || data.layers || [];
   allLayers.forEach((layer, i) => { layerColors[layer.id] = assignLayerColor(i); });
   renderApp();
+  writeHash();
 }
 
 function renderApp() {
@@ -174,6 +238,7 @@ function selectLayer(layerId) {
     highlightSelectedLayer(layerId);
     checkZoomAlert();
   }
+  writeHash();
 }
 
 
@@ -339,6 +404,7 @@ function selectValue(field, rawValue, rawJson) {
   document.getElementById('map-filter-chip').style.display = 'flex';
 
   if (map && selectedLayerId) applyMapValueFilter(selectedLayerId, field, rawValue);
+  writeHash();
 }
 
 function clearValueFilter() {
@@ -347,6 +413,7 @@ function clearValueFilter() {
   document.querySelectorAll('.value-tag').forEach(el => el.classList.remove('selected'));
   document.getElementById('map-filter-chip').style.display = 'none';
   if (map && selectedLayerId) highlightSelectedLayer(selectedLayerId);
+  writeHash();
 }
 
 // ── Map initialization ──
@@ -369,7 +436,10 @@ function initMap() {
   const bounds = tilejson.bounds;
   const opts = { container: 'map', style: buildMapStyle(), attributionControl: true };
 
-  if (center && center.length >= 2) {
+  if (_pendingRestore && _pendingRestore.z !== null) {
+    opts.center = [_pendingRestore.lng, _pendingRestore.lat];
+    opts.zoom = _pendingRestore.z;
+  } else if (center && center.length >= 2) {
     opts.center = [center[0], center[1]];
     opts.zoom = center[2] ?? tilejson.minzoom ?? 5;
   } else if (bounds) {
@@ -383,6 +453,7 @@ function initMap() {
   map = new maplibregl.Map(opts);
   map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
   map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
+  map.on('moveend', scheduleHashWrite);
 
   function updateZoomIndicator() {
     document.getElementById('map-zoom-value').textContent = map.getZoom().toFixed(1);
@@ -398,7 +469,19 @@ function initMap() {
       map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
     });
-    if (selectedLayerId) highlightSelectedLayer(selectedLayerId);
+    if (_pendingRestore?.layer) {
+      selectLayer(_pendingRestore.layer);
+      if (_pendingRestore.field && _pendingRestore.value !== null) {
+        try {
+          const rawValue = JSON.parse(_pendingRestore.value);
+          selectValue(_pendingRestore.field, rawValue, _pendingRestore.value);
+        } catch {}
+      }
+      _pendingRestore = null;
+    } else if (selectedLayerId) {
+      highlightSelectedLayer(selectedLayerId);
+    }
+    writeHash();
   });
 
   map.on('click', e => {
@@ -561,7 +644,9 @@ function sp(id, prop, value) {
 function reset() {
   tilejson = null; allLayers = []; selectedLayerId = null;
   selectedField = null; selectedValueJson = null;
+  currentSource = null;
   Object.keys(layerColors).forEach(k => delete layerColors[k]);
+  history.replaceState(null, '', location.pathname + location.search);
 
   if (map) { map.remove(); map = null; }
 
@@ -610,6 +695,8 @@ function closeLightbox() {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeLightbox(); closeHelp(); }
 });
+
+applyHash();
 
 // ── Geocoder ──
 let geocoderAbort = null;
