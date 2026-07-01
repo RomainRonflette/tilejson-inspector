@@ -1,5 +1,8 @@
 const TRANSLATIONS = {
   en: {
+    'drop.tagline': 'Explore vector tile schemas (layers, attributes and interactive map). Load your own TileJSON or pick one from the available schemas.',
+    'drop.load-title': 'Load a TileJSON',
+    'drop.or': 'or',
     'drop.subtitle': 'Load a TileJSON file to explore its vector layers and attributes.',
     'drop.openFile': 'Open a file',
     'drop.load': 'Load',
@@ -55,6 +58,9 @@ const TRANSLATIONS = {
     'help.caption.inspector': 'Inspector — layers, attributes and interactive map',
   },
   fr: {
+    'drop.tagline': 'Explorez les schémas de tuiles vectorielles (couches, attributs et carte interactive). Chargez votre propre TileJSON ou choisissez parmi les schémas disponibles.',
+    'drop.load-title': 'Charger un TileJSON',
+    'drop.or': 'ou',
     'drop.subtitle': 'Chargez un fichier TileJSON pour explorer ses couches vectorielles et leurs attributs.',
     'drop.openFile': 'Ouvrir un fichier',
     'drop.load': 'Charger',

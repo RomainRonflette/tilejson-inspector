@@ -22,24 +22,30 @@
       <option value="fr">FR</option>
     </select>
   </div>
-  <div class="drop-box" id="drop-box">
-    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-      <path d="M12 16V8m0 0-3 3m3-3 3 3M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1"/>
-    </svg>
-    <h2>tilejson-inspector</h2>
-    <p data-i18n="drop.subtitle">Load a TileJSON file to explore its vector layers and attributes.</p>
-    <div class="drop-actions">
-      <button class="btn primary" onclick="document.getElementById('file-input').click()" data-i18n="drop.openFile">Open a file</button>
-    </div>
-    <div class="url-row">
-      <input type="text" id="url-input" data-i18n-placeholder="url.placeholder" placeholder="https://… or path to a TileJSON">
-      <button class="btn" onclick="loadFromUrl()" data-i18n="drop.load">Load</button>
-    </div>
-    <input type="file" id="file-input" accept=".json,application/json">
-    <p class="drop-hint" data-i18n="drop.hint">Drag and drop a .json file here</p>
-    <div id="schema-list" style="display:none">
-      <p data-i18n="drop.schemas">Available schemas</p>
-      <div id="schema-items"></div>
+  <div class="drop-layout">
+    <h2 class="drop-title">TileJSON <span>Inspector</span></h2>
+    <p class="drop-tagline" data-i18n="drop.tagline">Explore vector tile schemas — layers, attributes and interactive map. Load your own TileJSON or pick one from the available schemas.</p>
+    <div class="drop-cols">
+      <div class="drop-panel drop-box" id="drop-box">
+        <p class="drop-load-title" data-i18n="drop.load-title">Load a TileJSON</p>
+        <div class="url-row">
+          <input type="text" id="url-input" data-i18n-placeholder="url.placeholder" placeholder="https://… or path to a TileJSON">
+          <button class="btn btn-load" onclick="loadFromUrl()" data-i18n="drop.load">Load</button>
+        </div>
+        <div class="drop-divider"><span data-i18n="drop.or">or</span></div>
+        <button class="btn drop-file-btn" onclick="document.getElementById('file-input').click()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 16V8m0 0-3 3m3-3 3 3M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1"/>
+          </svg>
+          <span data-i18n="drop.openFile">Open a file</span>
+        </button>
+        <p class="drop-hint" data-i18n="drop.hint">Drag and drop a .json file here</p>
+        <input type="file" id="file-input" accept=".json,application/json">
+      </div>
+      <div class="drop-schemas drop-panel" id="schema-list" style="display:none">
+        <p class="drop-schemas-title" data-i18n="drop.schemas">Available schemas</p>
+        <div id="schema-items"></div>
+      </div>
     </div>
   </div>
 </div>

@@ -96,10 +96,10 @@ function assignLayerColor(index) {
       const btns = document.createElement('div');
       btns.className = 'schema-btns';
 
-      items.forEach(({ name, file, url, center, zoom }) => {
+      items.forEach(({ name, description, file, url, center, zoom }) => {
         const btn = document.createElement('button');
-        btn.className = 'btn';
-        btn.textContent = name;
+        btn.className = 'schema-item-btn';
+        btn.innerHTML = `<span class="schema-item-name">${esc(name)}</span>${description ? `<span class="schema-item-desc">${esc(description)}</span>` : ''}`;
         btn.addEventListener('click', async () => {
           try {
             const href = url ?? `./tilejson/${file}`;
@@ -748,8 +748,19 @@ document.addEventListener('keydown', e => {
 
 applyHash();
 
-// ── Geocoder ──
+// ── Geocoder (Photon / komoot) ──
 let geocoderAbort = null;
+
+function photonLabel(props) {
+  const parts = [];
+  const main = props.name || (props.housenumber && props.street ? `${props.housenumber} ${props.street}` : props.street);
+  if (main) parts.push(main);
+  if (props.city && props.city !== main) parts.push(props.city);
+  else if (props.county && props.county !== main) parts.push(props.county);
+  if (props.state) parts.push(props.state);
+  if (props.country) parts.push(props.country);
+  return parts.join(', ');
+}
 
 function bindGeocoder() {
   if (geocoderAbort) geocoderAbort.abort();
@@ -766,13 +777,14 @@ function bindGeocoder() {
 
   function navigate(s) {
     if (!map) return;
-    const bb = s.boundingbox;
-    if (bb) {
-      map.fitBounds([[+bb[2], +bb[0]], [+bb[3], +bb[1]]], { padding: 50, duration: 0 });
+    const [lon, lat] = s.geometry.coordinates;
+    const extent = s.properties.extent; // [minLon, maxLat, maxLon, minLat]
+    if (extent) {
+      map.fitBounds([[extent[0], extent[3]], [extent[2], extent[1]]], { padding: 50, duration: 0 });
     } else {
-      map.jumpTo({ center: [+s.lon, +s.lat] });
+      map.jumpTo({ center: [lon, lat] });
     }
-    input.value = s.display_name.split(',')[0].trim();
+    input.value = (s.properties.name || photonLabel(s.properties)).split(',')[0].trim();
     close();
   }
 
@@ -793,7 +805,7 @@ function bindGeocoder() {
     if (!suggestions.length) { list.classList.remove('open'); return; }
     suggestions.forEach(s => {
       const li = document.createElement('li');
-      li.textContent = s.display_name;
+      li.textContent = photonLabel(s.properties);
       li.addEventListener('mousedown', e => { e.preventDefault(); navigate(s); });
       list.appendChild(li);
     });
@@ -807,8 +819,10 @@ function bindGeocoder() {
     if (q.length < 2) { close(); return; }
     debounce = setTimeout(async () => {
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5`, { signal, headers: { 'User-Agent': 'tilejson-inspector/1.0' } });
-        suggestions = await res.json();
+        const lang = currentLang === 'fr' ? 'fr' : 'en';
+        const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5&lang=${lang}`, { signal });
+        const data = await res.json();
+        suggestions = data.features || [];
         render();
       } catch { /* aborted or network error */ }
     }, 300);
